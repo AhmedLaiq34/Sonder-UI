@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BookOpen, PlayCircle, ShieldCheck, GraduationCap } from "lucide-react";
 import { getScenario } from "@/fixtures/scenarios";
 import { learnPageHref } from "@/fixtures/learn/pages";
-import { PageShell } from "@/components/app/PageShell";
+import { Container, PageMasthead, Section, Split, MetaList } from "@/components/layout";
+import { Mark } from "@/components/shared";
 import { buttonVariants } from "@/components/ui/button";
 import { MarkReadButton } from "./MarkReadButton";
 
@@ -23,68 +23,84 @@ export default async function RemediationPage({
   const learnHref = learnPageHref(scenario.subject, note.code);
 
   return (
-    <PageShell
-      eyebrow="Your remediation"
-      title={note.name}
-      description={`For ${scenario.topicName}. Read this in your own time — it's yours to come back to.`}
-    >
-      <div className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-        <ShieldCheck className="size-3.5 text-ok" />
-        Shared with you after your teacher reviewed the diagnosis.
-      </div>
+    <Container>
+      <PageMasthead
+        label="Study note"
+        title={note.name}
+        lede={`For ${scenario.topicName}. Read this in your own time. It is yours to come back to.`}
+      />
 
-      <div className="mt-6 space-y-6">
-        <section className="rounded-xl border border-border bg-card p-5">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <BookOpen className="size-4 text-muted-foreground" />
-            What was going on
-          </div>
-          <p className="mt-2 text-sm leading-relaxed text-foreground/85">
-            {note.explanation}
-          </p>
-          <div className="mt-4 border-t border-border pt-4 text-sm font-semibold">
-            How to think about it
-          </div>
-          <p className="mt-2 text-sm leading-relaxed text-foreground/85">
-            {note.correction}
-          </p>
-        </section>
-
-        <a
-          href={note.videoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/30"
-        >
-          <span className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-muted">
-            <PlayCircle className="size-6 text-foreground" />
-          </span>
-          <span className="min-w-0">
-            <span className="block text-sm font-semibold">{note.videoTitle}</span>
-            <span className="block truncate text-xs text-muted-foreground">
-              Opens on YouTube
-            </span>
-          </span>
-        </a>
-      </div>
-
-      <div className="mt-8 flex flex-wrap gap-2">
-        <MarkReadButton />
-        {scenario.verification ? (
-          <Link
-            href={`/student/verify/${scenario.id}`}
-            className={buttonVariants({ variant: "outline" })}
-          >
-            Preview the follow-up check
-          </Link>
-        ) : null}
-        {learnHref ? (
-          <Link href={learnHref} className={buttonVariants({ variant: "outline" })}>
-            <GraduationCap className="size-4" />
-            Learn more about this
-          </Link>
-        ) : null}
-      </div>
-    </PageShell>
+      <Section size="default">
+        <Split
+          ratio="8/4"
+          sticky
+          primary={
+            <>
+              <div className="prose-editorial">
+                <h2>What was going on</h2>
+                <p>{note.explanation}</p>
+                <h2>How to think about it</h2>
+                <p>{note.correction}</p>
+              </div>
+              <a
+                href={note.videoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group mt-12 flex min-h-16 items-baseline justify-between gap-6 border-t border-b border-border py-5"
+              >
+                <span className="min-w-0">
+                  <span className="relative inline-block text-lg font-medium">
+                    {note.videoTitle}
+                    <span
+                      aria-hidden
+                      className="absolute inset-x-0 -bottom-1 h-px origin-left scale-x-0 bg-accent transition-transform duration-150 ease-[var(--ease)] group-hover:scale-x-100"
+                    />
+                  </span>
+                  <span className="mt-2 block text-sm text-muted-foreground">
+                    Opens on YouTube
+                  </span>
+                </span>
+              </a>
+            </>
+          }
+          secondary={
+            <div>
+              <Mark bucket="confirmed">Teacher approved</Mark>
+              <p className="mt-4 text-sm text-muted-foreground">
+                Shared with you after your teacher reviewed the diagnosis.
+              </p>
+              <MetaList
+                className="mt-10"
+                items={[
+                  { label: "Subject", value: cap(scenario.subject) },
+                  { label: "Topic", value: scenario.topicName },
+                  { label: "Code", value: note.code },
+                ]}
+              />
+              <div className="mt-10 flex flex-col items-start gap-6">
+                <MarkReadButton />
+                {scenario.verification ? (
+                  <Link
+                    href={`/student/verify/${scenario.id}`}
+                    className={buttonVariants({ variant: "ghost" })}
+                  >
+                    Preview the follow-up check
+                  </Link>
+                ) : null}
+                {learnHref ? (
+                  <Link href={learnHref} className={buttonVariants({ variant: "ghost" })}>
+                    Learn more about this
+                  </Link>
+                ) : null}
+              </div>
+            </div>
+          }
+        />
+      </Section>
+    </Container>
   );
+}
+
+function cap(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
