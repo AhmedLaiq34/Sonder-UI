@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Check, PencilLine, X, LifeBuoy } from "lucide-react";
 import type { Scenario } from "@/fixtures/scenarios/types";
 import { studentForScenario } from "@/fixtures/students";
 import { catalogueForSubject, catalogueEntry } from "@/fixtures/catalogue";
@@ -12,10 +11,16 @@ import { escalationForScenario } from "@/fixtures/escalations";
 import {
   MisconceptionCard,
   EvidenceStep,
-  StatusBadge,
+  StatusMark,
+  Mark,
 } from "@/components/shared";
-import { PageShell } from "@/components/app/PageShell";
-import { SectionHeading, Surface } from "@/components/app/primitives";
+import {
+  Container,
+  PageMasthead,
+  Section,
+  Split,
+} from "@/components/layout";
+import { Label } from "@/components/type";
 import { SessionTabs } from "../Tabs";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -43,9 +48,9 @@ export function ReviewPanel({ scenario }: { scenario: Scenario }) {
     (c) => c.code !== scenario.studyNote?.code,
   );
 
-  const [mode, setMode] = useState<
-    "idle" | "correct" | "reject" | "resolve"
-  >("idle");
+  const [mode, setMode] = useState<"idle" | "correct" | "reject" | "resolve">(
+    "idle",
+  );
   const [pickedCode, setPickedCode] = useState<string | null>(null);
   const [reason, setReason] = useState("");
 
@@ -59,181 +64,214 @@ export function ReviewPanel({ scenario }: { scenario: Scenario }) {
     router.push("/teacher");
   }
 
+  const masthead = (
+    <PageMasthead
+      label="Review"
+      title={student?.name ?? "Review"}
+      lede={
+        existing
+          ? `${cap(scenario.subject)} · ${scenario.topicName}`
+          : isEscalated
+            ? "Resolve escalation"
+            : "Approve, correct or reject the diagnosis"
+      }
+      meta={
+        existing ? undefined : (
+          <StatusMark status={isEscalated ? "escalated" : "awaiting-review"} />
+        )
+      }
+      tabs={<SessionTabs scenarioId={scenario.id} />}
+    />
+  );
+
+  const subjectCol = (
+    <div>
+      <StatusMark status={isEscalated ? "escalated" : "awaiting-review"} />
+      <p className="mt-6 text-2xl font-semibold tracking-tight">
+        {student?.name ?? "Student"}
+      </p>
+      <p className="mt-3 text-sm text-muted-foreground">
+        {cap(scenario.subject)} · {scenario.topicName}
+      </p>
+      {isEscalated ? (
+        <p className="mt-8 text-base leading-relaxed">{finalStep.explanation}</p>
+      ) : diagnosed ? (
+        <div className="mt-8">
+          <MisconceptionCard
+            code={diagnosed.code}
+            name={diagnosed.name}
+            description={diagnosed.description}
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+
   if (existing) {
     return (
-      <PageShell
-        title={student?.name ?? "Review"}
-        description={`${cap(scenario.subject)} · ${scenario.topicName}`}
-        tabs={<SessionTabs scenarioId={scenario.id} />}
-        wide
-      >
-        <div className="flex items-center gap-2 rounded-lg border border-ok/30 bg-ok/10 p-4 text-sm">
-          <Check className="size-4 text-ok" />
-          Decision recorded: <strong>{DECISION_LABEL[existing]}</strong>
-        </div>
-        <div className="mt-6 flex gap-2">
-          <Button variant="outline" onClick={() => decide(scenario.id, existing)}>
-            Keep as is
-          </Button>
-          <Link href="/teacher" className={buttonVariants()}>
-            Back to dashboard
-          </Link>
-        </div>
-        <p className="mt-4 text-xs text-muted-foreground">
-          To try a different decision, sign out and back in, or clear it from the
-          dashboard.
-        </p>
-      </PageShell>
+      <Container>
+        {masthead}
+        <Section size="default">
+          <Split
+            ratio="8/4"
+            sticky
+            primary={
+              <div>
+                <Mark bucket="confirmed">
+                  Decision recorded: {DECISION_LABEL[existing]}
+                </Mark>
+                <div className="mt-12 flex flex-wrap gap-8">
+                  <Button
+                    variant="outline"
+                    onClick={() => decide(scenario.id, existing)}
+                  >
+                    Keep as is
+                  </Button>
+                  <Link href="/teacher" className={buttonVariants()}>
+                    Back to dashboard
+                  </Link>
+                </div>
+                <p className="mt-8 text-sm text-muted-foreground">
+                  To try a different decision, sign out and back in, or clear it from the
+                  dashboard.
+                </p>
+              </div>
+            }
+            secondary={subjectCol}
+          />
+        </Section>
+      </Container>
     );
   }
 
   const esc = escalationForScenario(scenario.id);
 
   return (
-    <PageShell
-      title={student?.name ?? "Review"}
-      description={isEscalated ? "Resolve escalation" : "Approve, correct or reject the diagnosis"}
-      actions={<StatusBadge status={isEscalated ? "escalated" : "awaiting-review"} />}
-      tabs={<SessionTabs scenarioId={scenario.id} />}
-      wide
-    >
-      {/* what the engine says */}
-      <div>
-        {isEscalated ? (
-          <div className="rounded-xl border border-warn/40 bg-warn/10 p-4">
-            <div className="flex items-center gap-2">
-              <StatusBadge status="escalated" />
-            </div>
-            <p className="mt-2 text-sm">{finalStep.explanation}</p>
-            {esc ? (
-              <div className="mt-3 rounded-lg bg-background/60 p-3">
-                <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-ai">
-                  <LifeBuoy className="size-3.5" />
-                  AI Consultant suggestion — an idea to weigh, not a diagnosis
-                </p>
-                <p className="mt-1.5 text-sm text-foreground/85">
-                  {esc.suggestion.text}
-                </p>
-                <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
-                  {esc.suggestion.evidence.map((e) => (
-                    <li key={e} className="flex gap-1.5">
-                      <span aria-hidden>·</span>
-                      {e}
-                    </li>
-                  ))}
-                </ul>
+    <Container>
+      {masthead}
+      <Section size="default">
+        <Split
+          ratio="8/4"
+          sticky
+          primary={
+            <div>
+              {isEscalated && esc ? (
+                <div className="mb-12 border-t-2 border-t-accent pt-8">
+                  <Label tone="accent">AI consultant suggestion</Label>
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    An idea to weigh, not a diagnosis.
+                  </p>
+                  <p className="mt-4 text-base leading-relaxed">{esc.suggestion.text}</p>
+                  <ul className="mt-6 border-t border-border">
+                    {esc.suggestion.evidence.map((e) => (
+                      <li key={e} className="border-b border-border py-3 text-sm text-muted-foreground">
+                        {e}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              <Label tone="muted">
+                Evidence
+                <span className="nums ml-3">{questionSteps.length}</span>
+              </Label>
+              <div className="mt-6 border-t border-border">
+                {questionSteps.map((s) => (
+                  <EvidenceStep
+                    key={s.stepIndex}
+                    index={s.stepIndex + 1}
+                    questionText={s.questionText ?? ""}
+                    answerGiven={s.answerGiven ?? ""}
+                    reasoning={s.explanation}
+                  />
+                ))}
               </div>
-            ) : null}
-          </div>
-        ) : diagnosed ? (
-          <MisconceptionCard
-            code={diagnosed.code}
-            name={diagnosed.name}
-            description={diagnosed.description}
-          />
-        ) : null}
-      </div>
 
-      {/* evidence recap */}
-      <SectionHeading className="mt-6" count={questionSteps.length}>
-        Evidence
-      </SectionHeading>
-      <Surface className="mt-2 divide-y divide-border px-4 py-0">
-        {questionSteps.map((s) => (
-          <EvidenceStep
-            key={s.stepIndex}
-            index={s.stepIndex + 1}
-            questionText={s.questionText ?? ""}
-            answerGiven={s.answerGiven ?? ""}
-            reasoning={s.explanation}
-          />
-        ))}
-      </Surface>
-
-      {/* actions */}
-      <div className="mt-8">
-        {isEscalated ? (
-          <>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant={mode === "resolve" ? "default" : "outline"}
-                onClick={() => setMode("resolve")}
-              >
-                <PencilLine className="size-4" />
-                Resolve manually
-              </Button>
-              <Button variant="ghost" onClick={() => router.push("/teacher/escalations")}>
-                Keep in queue
-              </Button>
-            </div>
-            {mode === "resolve" ? (
-              <ManualResolve
-                entries={catalogueForSubject(scenario.subject)}
-                pickedCode={pickedCode}
-                setPickedCode={setPickedCode}
-                reason={reason}
-                setReason={setReason}
-                onSubmit={() => commit("resolved")}
-              />
-            ) : null}
-          </>
-        ) : (
-          <>
-            <div className="flex flex-wrap gap-2">
-              <Button onClick={() => commit("approved")}>
-                <Check className="size-4" />
-                Approve
-              </Button>
-              <Button
-                variant={mode === "correct" ? "default" : "outline"}
-                onClick={() => setMode(mode === "correct" ? "idle" : "correct")}
-              >
-                <PencilLine className="size-4" />
-                Correct
-              </Button>
-              <Button
-                variant={mode === "reject" ? "default" : "outline"}
-                onClick={() => setMode(mode === "reject" ? "idle" : "reject")}
-              >
-                <X className="size-4" />
-                Reject
-              </Button>
-            </div>
-
-            {mode === "correct" ? (
-              <ManualResolve
-                heading="Pick the correct misconception"
-                entries={otherEntries}
-                pickedCode={pickedCode}
-                setPickedCode={setPickedCode}
-                reason={reason}
-                setReason={setReason}
-                onSubmit={() => commit("corrected")}
-              />
-            ) : null}
-
-            {mode === "reject" ? (
-              <div className="mt-4 rounded-xl border border-border bg-card p-4">
-                <label className="text-sm font-medium">Why are you rejecting this?</label>
-                <Textarea
-                  value={reason}
-                  onChange={(e) => setReason(e.target.value)}
-                  placeholder="e.g. the answers look like a careless slip, not a misconception"
-                  className="mt-2"
+              {isEscalated && mode === "resolve" ? (
+                <ManualResolve
+                  entries={catalogueForSubject(scenario.subject)}
+                  pickedCode={pickedCode}
+                  setPickedCode={setPickedCode}
+                  reason={reason}
+                  setReason={setReason}
+                  onSubmit={() => commit("resolved")}
                 />
-                <Button
-                  className="mt-3"
-                  disabled={!reason.trim()}
-                  onClick={() => commit("rejected")}
-                >
-                  Submit rejection
-                </Button>
+              ) : null}
+
+              {!isEscalated && mode === "correct" ? (
+                <ManualResolve
+                  heading="Pick the correct misconception"
+                  entries={otherEntries}
+                  pickedCode={pickedCode}
+                  setPickedCode={setPickedCode}
+                  reason={reason}
+                  setReason={setReason}
+                  onSubmit={() => commit("corrected")}
+                />
+              ) : null}
+
+              {!isEscalated && mode === "reject" ? (
+                <div className="mt-12 border-t border-border pt-8">
+                  <label className="text-base font-medium">
+                    Why are you rejecting this?
+                  </label>
+                  <Textarea
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                    placeholder="e.g. the answers look like a careless slip, not a misconception"
+                    className="mt-4"
+                  />
+                  <Button
+                    className="mt-6"
+                    disabled={!reason.trim()}
+                    onClick={() => commit("rejected")}
+                  >
+                    Submit rejection
+                  </Button>
+                </div>
+              ) : null}
+
+              <div className="mt-12 flex flex-wrap gap-8">
+                {isEscalated ? (
+                  <>
+                    <Button
+                      variant={mode === "resolve" ? "primary" : "outline"}
+                      onClick={() => setMode("resolve")}
+                    >
+                      Resolve manually
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => router.push("/teacher/escalations")}
+                    >
+                      Keep in queue
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button onClick={() => commit("approved")}>Approve</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setMode(mode === "correct" ? "idle" : "correct")}
+                    >
+                      Correct
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setMode(mode === "reject" ? "idle" : "reject")}
+                    >
+                      Reject
+                    </Button>
+                  </>
+                )}
               </div>
-            ) : null}
-          </>
-        )}
-      </div>
-    </PageShell>
+            </div>
+          }
+          secondary={subjectCol}
+        />
+      </Section>
+    </Container>
   );
 }
 
@@ -255,42 +293,41 @@ function ManualResolve({
   onSubmit: () => void;
 }) {
   return (
-    <div className="mt-4 rounded-xl border border-border bg-card p-4">
-      <p className="text-sm font-medium">{heading}</p>
-      <div className="mt-3 space-y-2">
+    <div className="mt-12 border-t border-border pt-8">
+      <p className="text-base font-medium">{heading}</p>
+      <div className="mt-6 border-t border-border">
         {entries.map((c) => (
           <button
             key={c.code}
             type="button"
             onClick={() => setPickedCode(c.code)}
             className={cn(
-              "flex w-full gap-3 rounded-lg border p-3 text-left text-sm transition-colors",
-              pickedCode === c.code
-                ? "border-foreground ring-1 ring-foreground"
-                : "border-border hover:border-foreground/40",
+              "relative flex w-full gap-4 border-b border-border py-5 pr-2 pl-5 text-left transition-colors duration-150",
+              pickedCode === c.code ? "bg-muted" : "hover:bg-muted",
             )}
           >
-            <span className="nums mt-0.5 rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
-              {c.code}
-            </span>
+            {pickedCode === c.code ? (
+              <span aria-hidden className="absolute inset-y-0 left-0 w-0.5 bg-accent" />
+            ) : null}
+            <span className="label nums shrink-0 text-faint">{c.code}</span>
             <span>
-              <span className="block font-medium">{c.name}</span>
-              <span className="block text-xs text-muted-foreground">
+              <span className="block text-base font-medium">{c.name}</span>
+              <span className="mt-2 block text-sm text-muted-foreground">
                 {c.description}
               </span>
             </span>
           </button>
         ))}
       </div>
-      <label className="mt-4 block text-sm font-medium">Reason</label>
+      <label className="mt-8 block text-base font-medium">Reason</label>
       <Textarea
         value={reason}
         onChange={(e) => setReason(e.target.value)}
         placeholder="A short note for the record"
-        className="mt-2"
+        className="mt-4"
       />
       <Button
-        className="mt-3"
+        className="mt-6"
         disabled={!pickedCode || !reason.trim()}
         onClick={onSubmit}
       >

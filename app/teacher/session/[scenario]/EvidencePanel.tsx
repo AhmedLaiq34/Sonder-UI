@@ -1,21 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import type { Scenario } from "@/fixtures/scenarios/types";
 import { useScenarioPlayer } from "@/lib/useScenarioPlayer";
 import { hypothesisRows } from "@/lib/hypotheses";
 import { studentForScenario } from "@/fixtures/students";
-import { PageShell } from "@/components/app/PageShell";
-import { SectionHeading, Surface } from "@/components/app/primitives";
+import {
+  Container,
+  PageMasthead,
+  Section,
+  Split,
+} from "@/components/layout";
+import { StepTimeline } from "@/components/app/StepTimeline";
 import { SessionTabs } from "./Tabs";
 import {
   PosteriorBarSet,
   EvidenceStep,
-  StatusBadge,
+  StatusMark,
+  OutcomeBanner,
   type SessionStatus,
 } from "@/components/shared";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Label } from "@/components/type";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const OUTCOME_STATUS: Record<string, SessionStatus> = {
@@ -32,163 +39,138 @@ export function EvidencePanel({ scenario }: { scenario: Scenario }) {
   const finalStep = scenario.steps[scenario.steps.length - 1];
   const status = OUTCOME_STATUS[finalStep.outcome] ?? "awaiting-review";
   const questionSteps = scenario.steps.filter((s) => s.questionText !== null);
+  const diagnosed =
+    finalStep.outcome === "diagnosed"
+      ? (scenario.hypothesisLabels[scenario.studyNote?.code ?? "M1"] ??
+        scenario.studyNote?.name ??
+        "Misconception identified")
+      : null;
 
   return (
-    <PageShell
-      title={student?.name ?? "Student"}
-      description={`${cap(scenario.subject)} · ${scenario.topicName}`}
-      actions={<StatusBadge status={status} />}
-      tabs={<SessionTabs scenarioId={scenario.id} />}
-      wide
-    >
-      {/* outcome line */}
-      <div className="rounded-lg border border-border bg-muted/40 p-3 text-sm">
-        <span className="font-medium">Engine outcome: </span>
-        {finalStep.outcome === "diagnosed" ? (
-          <span>
-            diagnosed —{" "}
-            {scenario.hypothesisLabels[scenario.studyNote?.code ?? "M1"] ??
-              scenario.studyNote?.name}
-          </span>
-        ) : (
-          <span>{finalStep.explanation}</span>
-        )}
-      </div>
+    <Container>
+      <PageMasthead
+        label="Evidence"
+        title={student?.name ?? "Student"}
+        lede={`${cap(scenario.subject)} · ${scenario.topicName}`}
+        meta={<StatusMark status={status} />}
+        tabs={<SessionTabs scenarioId={scenario.id} />}
+      />
 
-      {/* step scrubber */}
-      <SectionHeading
-        className="mt-8"
-        action={
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon-sm"
-              aria-label="Previous step"
-              disabled={player.isFirst}
-              onClick={() => player.goTo(stepIndex - 1)}
-            >
-              <ChevronLeft className="size-4" />
-            </Button>
-            <span className="nums text-xs text-muted-foreground">
-              {stepIndex + 1} / {totalSteps}
-            </span>
-            <Button
-              variant="outline"
-              size="icon-sm"
-              aria-label="Next step"
-              disabled={player.isLast}
-              onClick={() => player.goTo(stepIndex + 1)}
-            >
-              <ChevronRight className="size-4" />
-            </Button>
-          </div>
-        }
-      >
-        Step-by-step
-      </SectionHeading>
+      <StepTimeline
+        total={totalSteps}
+        current={stepIndex}
+        onStepChange={(i) => player.goTo(i)}
+        label="Session steps"
+      />
 
-      <div className="mt-3 grid gap-4 md:grid-cols-2">
-        <Surface className="p-4">
-          {current.questionText ? (
-            <>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Question asked
-              </p>
-              <p className="mt-1.5 text-sm font-medium leading-snug">
-                {current.questionText}
-              </p>
-              <ul className="mt-3 space-y-1.5">
-                {current.optionsShown?.map((opt) => {
-                  const isAnswer = opt === current.answerGiven;
-                  const isCorrect = opt === current.correctAnswer;
-                  return (
-                    <li
-                      key={opt}
-                      className={cn(
-                        "flex items-center justify-between rounded-md border px-2.5 py-1.5 text-sm",
-                        isAnswer
-                          ? "border-foreground bg-foreground text-background"
-                          : "border-border text-muted-foreground",
-                      )}
-                    >
-                      <span>{opt}</span>
-                      <span className="flex items-center gap-1.5 text-xs">
-                        {isCorrect ? (
-                          <span
-                            className={cn(
-                              "inline-flex items-center gap-0.5",
-                              isAnswer ? "text-background" : "text-ok",
-                            )}
-                          >
-                            <Check className="size-3" /> correct
+      <Section size="default">
+        <Split
+          ratio="8/4"
+          sticky
+          primary={
+            <div>
+              {current.questionText ? (
+                <>
+                  <Label tone="muted">Question asked</Label>
+                  <p className="mt-4 text-2xl font-semibold leading-snug tracking-tight">
+                    {current.questionText}
+                  </p>
+                  <ul className="mt-8 border-t border-border">
+                    {current.optionsShown?.map((opt) => {
+                      const isAnswer = opt === current.answerGiven;
+                      const isCorrect = opt === current.correctAnswer;
+                      return (
+                        <li
+                          key={opt}
+                          className={cn(
+                            "relative flex min-h-14 items-center justify-between gap-6 border-b border-border px-2 py-4 text-base",
+                            isAnswer && "bg-muted",
+                          )}
+                        >
+                          {isAnswer ? (
+                            <span aria-hidden className="absolute inset-y-0 left-0 w-0.5 bg-accent" />
+                          ) : null}
+                          <span>{opt}</span>
+                          <span className="label flex items-center gap-3 text-muted-foreground">
+                            {isCorrect ? (
+                              <span className={cn("inline-flex items-center gap-1", isAnswer ? "text-foreground" : "text-accent")}>
+                                <Check className="size-3.5" strokeWidth={1.5} />
+                                correct
+                              </span>
+                            ) : null}
+                            {isAnswer ? <span>answered</span> : null}
                           </span>
-                        ) : null}
-                        {isAnswer ? <span>answered</span> : null}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-              <p className="mt-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Why this question
-              </p>
-              <p className="mt-1 text-xs italic leading-relaxed text-muted-foreground">
-                {current.explanation}
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Session end
-              </p>
-              <p className="mt-1.5 text-sm leading-relaxed">
-                {current.explanation}
-              </p>
-            </>
-          )}
-        </Surface>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <Label tone="muted" className="mt-10">
+                    Why this question
+                  </Label>
+                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                    {current.explanation}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <Label tone="muted">Session end</Label>
+                  <p className="mt-4 text-base leading-relaxed">{current.explanation}</p>
+                </>
+              )}
 
-        <Surface className="p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Posterior after this step
-          </p>
-          <div className="mt-3">
-            <PosteriorBarSet
-              hypotheses={hypothesisRows(scenario, current.posterior)}
-            />
-          </div>
-        </Surface>
-      </div>
-
-      <SectionHeading className="mt-8" count={questionSteps.length}>
-        Full answer trace
-      </SectionHeading>
-      <Surface className="mt-2 divide-y divide-border px-4 py-0">
-        {questionSteps.map((s) => (
-          <EvidenceStep
-            key={s.stepIndex}
-            index={s.stepIndex + 1}
-            questionText={s.questionText ?? ""}
-            answerGiven={s.answerGiven ?? ""}
-            reasoning={s.explanation}
-            isCurrent={s.stepIndex === stepIndex}
-          />
-        ))}
-      </Surface>
-
-      <div className="mt-8 flex flex-wrap gap-2">
-        <Link
-          href={`/teacher/session/${scenario.id}/review`}
-          className={buttonVariants()}
-        >
-          {status === "escalated" ? "Resolve this case" : "Go to review"}
-          <ChevronRight className="size-4" />
-        </Link>
-        <Link href="/teacher" className={buttonVariants({ variant: "ghost" })}>
-          Back to dashboard
-        </Link>
-      </div>
-    </PageShell>
+              <div className="mt-16">
+                <Label tone="muted">
+                  Full answer trace
+                  <span className="nums ml-3">{questionSteps.length}</span>
+                </Label>
+                <div className="mt-6 border-t border-border">
+                  {questionSteps.map((s) => (
+                    <EvidenceStep
+                      key={s.stepIndex}
+                      index={s.stepIndex + 1}
+                      questionText={s.questionText ?? ""}
+                      answerGiven={s.answerGiven ?? ""}
+                      reasoning={s.explanation}
+                      isCurrent={s.stepIndex === stepIndex}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          }
+          secondary={
+            <div>
+              <StatusMark status={status} />
+              <OutcomeBanner
+                className="mt-8"
+                type={diagnosed ? "diagnosed" : "unsure"}
+                title="Engine outcome"
+                message={diagnosed ? `Diagnosed: ${diagnosed}` : finalStep.explanation}
+              />
+              <Label tone="muted" className="mt-10">
+                Posterior after this step
+              </Label>
+              <div className="mt-6">
+                <PosteriorBarSet
+                  hypotheses={hypothesisRows(scenario, current.posterior)}
+                />
+              </div>
+              <div className="mt-12 flex flex-col items-start gap-6">
+                <Link
+                  href={`/teacher/session/${scenario.id}/review`}
+                  className={buttonVariants()}
+                >
+                  {status === "escalated" ? "Resolve this case" : "Go to review"}
+                </Link>
+                <Link href="/teacher" className={buttonVariants({ variant: "ghost" })}>
+                  Back to dashboard
+                </Link>
+              </div>
+            </div>
+          }
+        />
+      </Section>
+    </Container>
   );
 }
 
