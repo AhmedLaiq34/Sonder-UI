@@ -1,24 +1,32 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
-import { PageShell } from "@/components/app/PageShell";
+import {
+  Container,
+  PageMasthead,
+  Section,
+  GroupHeading,
+} from "@/components/layout";
+import { FilterStrip } from "@/components/app/FilterStrip";
 import { MisconceptionCard } from "@/components/shared";
 import { EmptyState } from "@/components/app/EmptyState";
+import { Input } from "@/components/ui/input";
 import { AdminTabs } from "../Tabs";
 import { CATALOGUE } from "@/fixtures/catalogue";
-import { cn } from "@/lib/utils";
 
-const SUBJECTS = ["all", "mathematics", "physics", "chemistry"] as const;
+type SubjectFilter = "all" | "mathematics" | "physics" | "chemistry";
+type StatusFilter = "all" | "validated" | "pending" | "catalogued-only";
 
 export default function CatalogueBrowser() {
   const [q, setQ] = useState("");
-  const [subject, setSubject] = useState<(typeof SUBJECTS)[number]>("all");
+  const [subject, setSubject] = useState<SubjectFilter>("all");
+  const [status, setStatus] = useState<StatusFilter>("all");
 
   const results = useMemo(() => {
     const needle = q.toLowerCase().trim();
     return CATALOGUE.filter((c) => {
       if (subject !== "all" && c.subject !== subject) return false;
+      if (status !== "all" && c.status !== status) return false;
       if (!needle) return true;
       return (
         c.name.toLowerCase().includes(needle) ||
@@ -26,69 +34,94 @@ export default function CatalogueBrowser() {
         c.code.toLowerCase().includes(needle)
       );
     });
-  }, [q, subject]);
+  }, [q, subject, status]);
+
+  const bySubject = useMemo(() => {
+    const groups: Record<string, typeof results> = {};
+    for (const c of results) {
+      (groups[c.subject] ??= []).push(c);
+    }
+    return groups;
+  }, [results]);
 
   return (
-    <PageShell
-      title="Misconception catalogue"
-      description="The validated set of misconceptions the engine can diagnose, per subject."
-      tabs={<AdminTabs />}
-      wide
-    >
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[220px]">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search name, description or code"
-            className="w-full rounded-lg border border-border bg-card py-2 pl-9 pr-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40"
+    <Container>
+      <PageMasthead
+        label="Catalogue"
+        title="Misconception catalogue"
+        lede="The validated set of misconceptions the engine can diagnose, per subject."
+        tabs={<AdminTabs />}
+      />
+
+      <div className="sticky top-[var(--topbar-h)] z-20 space-y-4 border-b border-border bg-background py-4">
+        <label htmlFor="catalogue-search" className="sr-only">
+          Search name, description or code
+        </label>
+        <Input
+          id="catalogue-search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search name, description or code"
+        />
+        <div className="flex flex-wrap items-center gap-8">
+          <FilterStrip
+            label="Filter by subject"
+            value={subject}
+            onChange={setSubject}
+            options={[
+              { value: "all", label: "All" },
+              { value: "mathematics", label: "Mathematics" },
+              { value: "physics", label: "Physics" },
+              { value: "chemistry", label: "Chemistry" },
+            ]}
           />
-        </div>
-        <div className="flex gap-1">
-          {SUBJECTS.map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => setSubject(s)}
-              className={cn(
-                "rounded-md px-2.5 py-1.5 text-xs font-medium capitalize transition-colors",
-                subject === s
-                  ? "bg-foreground text-background"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {s}
-            </button>
-          ))}
+          <FilterStrip
+            label="Filter by validation status"
+            value={status}
+            onChange={setStatus}
+            options={[
+              { value: "all", label: "Any status" },
+              { value: "validated", label: "Validated" },
+              { value: "pending", label: "Pending" },
+              { value: "catalogued-only", label: "Catalogued only" },
+            ]}
+          />
         </div>
       </div>
 
-      <p className="mt-4 text-xs text-muted-foreground">
-        {results.length} {results.length === 1 ? "entry" : "entries"}
-      </p>
+      <Section size="tight">
+        <p className="mb-8 text-sm text-muted-foreground">
+          {results.length} {results.length === 1 ? "entry" : "entries"}
+        </p>
 
-      <div className="mt-3 grid gap-3 md:grid-cols-2">
-        {results.map((c) => (
-          <MisconceptionCard
-            key={`${c.subject}-${c.code}`}
-            code={c.code}
-            name={c.name}
-            description={c.description}
-            status={c.status}
-          />
+        {Object.entries(bySubject).map(([subj, entries]) => (
+          <div key={subj} className="mb-16 last:mb-0">
+            <GroupHeading count={entries.length}>{cap(subj)}</GroupHeading>
+            <div className="border-t border-border">
+              {entries.map((c) => (
+                <MisconceptionCard
+                  key={`${c.subject}-${c.code}`}
+                  code={c.code}
+                  name={c.name}
+                  description={c.description}
+                  status={c.status}
+                />
+              ))}
+            </div>
+          </div>
         ))}
-      </div>
 
-      {results.length === 0 ? (
-        <div className="mt-4">
+        {results.length === 0 ? (
           <EmptyState
-            icon={Search}
             title="Nothing matches that search"
             body="Try a broader term, or clear the subject filter."
           />
-        </div>
-      ) : null}
-    </PageShell>
+        ) : null}
+      </Section>
+    </Container>
   );
+}
+
+function cap(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
