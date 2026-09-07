@@ -14,6 +14,7 @@ export default function TeacherConsultant() {
         prompts: TEACHER_PROMPTS,
         fallback: TEACHER_FALLBACK,
       }}
+      label="Ask the consultant"
     />
   );
 }
