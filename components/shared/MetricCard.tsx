@@ -1,11 +1,13 @@
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Label } from "@/components/type";
 
 type Direction = "up" | "down" | "flat";
 
 /**
- * A single headline number with the comparison that gives it meaning
- * (Feature 20 — performance is reported *against* a baseline, not in isolation).
+ * One headline number with the comparison that gives it meaning. BLUEPRINT
+ * feature 20: performance is always reported against a baseline, never alone.
+ * `goodWhen` is per metric: fewer questions is good, higher accuracy is good.
  */
 export function MetricCard({
   label,
@@ -25,32 +27,31 @@ export function MetricCard({
   className?: string;
 }) {
   const Icon =
-    direction === "up"
-      ? ArrowUpRight
-      : direction === "down"
-        ? ArrowDownRight
-        : Minus;
+    direction === "up" ? ArrowUpRight : direction === "down" ? ArrowDownRight : Minus;
 
-  const tone =
-    !direction || direction === "flat"
-      ? "text-muted-foreground"
-      : direction === goodWhen
-        ? "text-ok"
-        : "text-warn-foreground dark:text-warn";
+  const favourable = direction && direction !== "flat" && direction === goodWhen;
+  const tone = !direction || direction === "flat"
+    ? "text-muted-foreground"
+    : favourable
+      ? "text-accent"
+      : "text-attention";
 
   return (
-    <div className={cn("rounded-lg border border-border bg-card p-4", className)}>
-      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        {label}
+    <div className={cn("border-t border-border pt-8", className)}>
+      <Label tone="muted">{label}</Label>
+      <p className="nums mt-6 font-mono text-5xl leading-none tracking-tight">
+        {value}
       </p>
-      <p className="nums mt-2 text-3xl font-semibold tracking-tight">{value}</p>
-      <p className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
+      <p className="mt-6 flex items-baseline gap-2 text-sm">
         {direction ? (
-          <Icon className={cn("size-3.5", tone)} aria-hidden />
+          <Icon className={cn("size-4 shrink-0 self-center", tone)} strokeWidth={1.5} aria-hidden />
         ) : null}
         <span className={cn("nums font-medium", tone)}>{comparisonValue}</span>
-        <span>{comparisonLabel}</span>
+        <span className="text-muted-foreground">{comparisonLabel}</span>
       </p>
+      <span className="sr-only">
+        {favourable ? "Favourable against the baseline." : "Not favourable against the baseline."}
+      </span>
     </div>
   );
 }

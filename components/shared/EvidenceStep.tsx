@@ -1,9 +1,10 @@
 import { cn } from "@/lib/utils";
+import { Label } from "@/components/type";
 
 /**
- * One row of the answer trace on the evidence panel: the question that was
- * asked, the answer the student gave, and the engine's one-line reason for
- * asking it. Repeats down T2. Part of the Full Evidence Trail (Feature 18).
+ * One row of the answer trace: the question asked, the answer given, and the
+ * engine's one-line reason for choosing it. The current step is marked by a 2px
+ * accent rule on the left plus a muted ground, never by colour alone.
  */
 export function EvidenceStep({
   index,
@@ -23,31 +24,39 @@ export function EvidenceStep({
   return (
     <div
       className={cn(
-        "flex gap-3 py-4",
-        isCurrent && "rounded-md bg-muted/50 px-3",
+        "relative border-b border-border py-8 pl-8",
+        isCurrent && "bg-muted",
         className,
       )}
     >
-      <div
+      {isCurrent ? (
+        <span aria-hidden className="absolute inset-y-0 left-0 w-0.5 bg-accent" />
+      ) : null}
+
+      <span
+        aria-hidden
         className={cn(
-          "nums flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-semibold",
-          isCurrent
-            ? "border-foreground bg-foreground text-background"
-            : "border-border text-muted-foreground",
+          "nums absolute left-0 top-8 font-mono text-sm",
+          isCurrent ? "text-accent" : "text-faint",
+          isCurrent && "pl-3",
         )}
       >
-        {index}
-      </div>
-      <div className="min-w-0 space-y-1.5">
-        <p className="text-sm font-medium leading-snug">{questionText}</p>
-        <p className="text-sm">
-          <span className="text-muted-foreground">Answered </span>
-          <span className="font-medium">{answerGiven}</span>
-        </p>
-        <p className="text-xs italic leading-relaxed text-muted-foreground">
-          {reasoning}
-        </p>
-      </div>
+        {String(index).padStart(2, "0")}
+      </span>
+
+      <p className="text-lg font-medium leading-snug">{questionText}</p>
+
+      <p className="mt-4 text-base">
+        <span className="text-muted-foreground">Answered </span>
+        <span className="font-medium text-foreground">{answerGiven}</span>
+      </p>
+
+      <Label tone="muted" className="mt-6">
+        Why this question
+      </Label>
+      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+        {reasoning}
+      </p>
     </div>
   );
 }

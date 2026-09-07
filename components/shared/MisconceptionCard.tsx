@@ -1,19 +1,18 @@
 import { cn } from "@/lib/utils";
-import { StatusBadge, type SessionStatus } from "./StatusBadge";
+import { Mark } from "./StatusMark";
 
+/** Kept for fixtures/catalogue.ts. Do not rename or narrow. */
 export type MisconceptionStatus = "validated" | "pending" | "catalogued-only";
 
-const STATUS_TO_BADGE: Record<MisconceptionStatus, SessionStatus | null> = {
-  validated: "diagnosed",
-  pending: "awaiting-review",
-  "catalogued-only": "catalogued-only",
+const STATUS: Record<
+  MisconceptionStatus,
+  { bucket: "confirmed" | "pending" | "inert"; label: string }
+> = {
+  validated: { bucket: "confirmed", label: "Validated" },
+  pending: { bucket: "pending", label: "Pending" },
+  "catalogued-only": { bucket: "inert", label: "Catalogued only" },
 };
 
-/**
- * One misconception, shown the same way everywhere it appears (review queue,
- * escalation, catalogue). Optional `code` is the engine's short id (M1, M2...).
- * `children` is for actions (approve / select buttons) the caller supplies.
- */
 export function MisconceptionCard({
   name,
   description,
@@ -31,32 +30,34 @@ export function MisconceptionCard({
   className?: string;
   children?: React.ReactNode;
 }) {
-  const badge = status ? STATUS_TO_BADGE[status] : null;
+  const s = status ? STATUS[status] : null;
   return (
     <div
       className={cn(
-        "rounded-lg border bg-card p-4 transition-colors",
-        selected ? "border-foreground ring-1 ring-foreground" : "border-border",
+        "relative border-b border-border py-6 pl-6 transition-colors duration-150",
+        selected && "bg-muted",
         className,
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            {code ? (
-              <span className="nums rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
-                {code}
-              </span>
-            ) : null}
-            <h3 className="truncate text-sm font-semibold">{name}</h3>
-          </div>
-          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-            {description}
-          </p>
+      {selected ? (
+        <span aria-hidden className="absolute inset-y-0 left-0 w-0.5 bg-accent" />
+      ) : null}
+
+      <div className="flex flex-wrap items-baseline justify-between gap-4">
+        <div className="flex min-w-0 items-baseline gap-4">
+          {code ? (
+            <span className="label nums shrink-0 text-faint">{code}</span>
+          ) : null}
+          <h3 className="min-w-0 text-lg font-medium leading-snug">{name}</h3>
         </div>
-        {badge ? <StatusBadge status={badge} className="shrink-0" /> : null}
+        {s ? <Mark bucket={s.bucket}>{s.label}</Mark> : null}
       </div>
-      {children ? <div className="mt-3 flex flex-wrap gap-2">{children}</div> : null}
+
+      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+        {description}
+      </p>
+
+      {children ? <div className="mt-6 flex flex-wrap gap-8">{children}</div> : null}
     </div>
   );
 }
