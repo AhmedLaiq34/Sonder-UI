@@ -4,201 +4,397 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  /* Semantic status colours — muted, deliberate. Swap freely later. */
-  --color-ok: var(--ok);
-  --color-ok-foreground: var(--ok-foreground);
-  --color-warn: var(--warn);
-  --color-warn-foreground: var(--warn-foreground);
-  --color-info: var(--info);
-  --color-info-foreground: var(--info-foreground);
-  --color-ai: var(--ai);
-  --color-ai-foreground: var(--ai-foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-geist-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-}
+/* ==========================================================================
+   RAW TOKENS
+   One palette. Dark only. Every value contrast-checked; see the plan, part 2.2.
+   ========================================================================== */
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.5rem;
-  --header-height: 3.25rem;
-  --sidebar-width: 15rem;
-  --sidebar-width-collapsed: 3.5rem;
-  --ok: oklch(0.56 0.1 155);
-  --ok-foreground: oklch(0.985 0 0);
-  --warn: oklch(0.7 0.11 72);
-  --warn-foreground: oklch(0.28 0.04 72);
-  --info: oklch(0.56 0.1 245);
-  --info-foreground: oklch(0.985 0 0);
-  --ai: oklch(0.53 0.11 295);
-  --ai-foreground: oklch(0.985 0 0);
-  --sidebar: oklch(0.988 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  color-scheme: dark;
+
+  /* ---- font stacks. The --font-*-* vars come from next/font on <html>. ---- */
+  --stack-sans: var(--font-inter-tight), "Inter Tight", "Inter", system-ui,
+    -apple-system, "Segoe UI", sans-serif;
+  --stack-mono: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace,
+    SFMono-Regular, Menlo, Consolas, monospace;
+  --stack-quote: var(--font-playfair), "Playfair Display", Georgia,
+    "Times New Roman", serif;
+
+  /* ---- dark ground ---- */
+  --background: #1a1a1a;          /* charcoal, never pure black */
+  --foreground: #fafafa;          /* warm white. 16.7:1 */
+  --muted: #232323;               /* the one elevated surface */
+  --muted-foreground: #8a8a8a;    /* 5.04:1, passes AA at body size */
+  --faint: #4a4a4a;               /* DECORATIVE TYPE ONLY. Never readable copy. */
+
+  --accent: #39ff14;              /* the one accent. 12.8:1 */
+  --accent-foreground: #1a1a1a;
+  --attention: #ffb020;           /* the second accent. 9.5:1 */
+  --attention-foreground: #1a1a1a;
+
+  --border: #262626;              /* decorative hairlines only */
+  --border-strong: #666666;       /* every control boundary. 3.0:1, WCAG 1.4.11 */
+  --border-hover: #404040;
+
+  --card: #0f0f0f;
+  --card-foreground: #fafafa;
+  --input: #1a1a1a;
+  --ring: #39ff14;
+
+  /* ---- paper ground: the vine band only (plan 9.5).
+          NEVER put --accent on --paper. #39FF14 on #FAFAFA is 1.30:1. ---- */
+  --paper: #fafafa;
+  --paper-ink: #1a1a1a;
+  --paper-muted: #5f5f5f;         /* 6.1:1 on paper */
+  --paper-accent: #1b7a00;        /* 5.3:1 on paper */
+  --paper-border: #d4d4d4;
+
+  /* ---- shadcn compatibility aliases. Several components/ui primitives read
+          these names. Mapping them here means those files need no edits. ---- */
+  --primary: #fafafa;
+  --primary-foreground: #1a1a1a;
+  --secondary: #232323;
+  --secondary-foreground: #fafafa;
+  --popover: #0f0f0f;
+  --popover-foreground: #fafafa;
+  --destructive: #fafafa;         /* no red in this build. See plan 2.3. */
+
+  /* ---- motion ---- */
+  --ease: cubic-bezier(0.25, 0, 0, 1);
+
+  /* ---- layout ---- */
+  --topbar-h: 64px;
+  --nav-w: 240px;
+  --nav-w-collapsed: 72px;
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --ok: oklch(0.7 0.11 155);
-  --ok-foreground: oklch(0.16 0.02 155);
-  --warn: oklch(0.8 0.11 78);
-  --warn-foreground: oklch(0.2 0.03 78);
-  --info: oklch(0.68 0.11 245);
-  --info-foreground: oklch(0.16 0.02 245);
-  --ai: oklch(0.7 0.11 295);
-  --ai-foreground: oklch(0.16 0.02 295);
-  --sidebar: oklch(0.175 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+@media (min-width: 768px) {
+  :root { --topbar-h: 80px; }
 }
+
+/* ==========================================================================
+   THEME MAPPING
+   `inline` means utilities emit the referenced value rather than another var().
+   ========================================================================== */
+
+@theme inline {
+  /* ---- colour ---- */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-attention: var(--attention);
+  --color-attention-foreground: var(--attention-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-border-hover: var(--border-hover);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-paper: var(--paper);
+  --color-paper-ink: var(--paper-ink);
+  --color-paper-muted: var(--paper-muted);
+  --color-paper-accent: var(--paper-accent);
+  --color-paper-border: var(--paper-border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-destructive: var(--destructive);
+
+  /* ---- families ---- */
+  --font-sans: var(--stack-sans);
+  --font-mono: var(--stack-mono);
+  --font-quote: var(--stack-quote);
+
+  /* ---- type scale. Overrides Tailwind's defaults. See plan 2.4. ---- */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.6;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.6;
+  --text-base: 1rem;
+  --text-base--line-height: 1.6;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.75;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.25;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 1.25;
+  --text-3xl: 2rem;
+  --text-3xl--line-height: 1.1;
+  --text-4xl: 2.5rem;
+  --text-4xl--line-height: 1.1;
+  --text-5xl: 3.5rem;
+  --text-5xl--line-height: 1.1;
+  --text-6xl: 4.5rem;
+  --text-6xl--line-height: 1.1;
+  --text-7xl: 6rem;
+  --text-7xl--line-height: 1;
+  --text-8xl: 8rem;
+  --text-8xl--line-height: 1;
+  --text-9xl: 10rem;
+  --text-9xl--line-height: 1;
+
+  /* ---- tracking ---- */
+  --tracking-tighter: -0.06em;
+  --tracking-tight: -0.04em;
+  --tracking-normal: -0.01em;
+  --tracking-wide: 0.05em;
+  --tracking-wider: 0.1em;
+  --tracking-widest: 0.2em;
+
+  /* ---- leading ---- */
+  --leading-none: 1;
+  --leading-tight: 1.1;
+  --leading-snug: 1.25;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  /* ---- radius: zero, at every key, so a stray rounded-* renders sharp ---- */
+  --radius: 0px;
+  --radius-none: 0px;
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+
+  /* ---- shadow: none, at every key, so a stray shadow-* renders nothing ---- */
+  --shadow-2xs: 0 0 #0000;
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 0 #0000;
+  --shadow-md: 0 0 #0000;
+  --shadow-lg: 0 0 #0000;
+  --shadow-xl: 0 0 #0000;
+  --shadow-2xl: 0 0 #0000;
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+  /* ---------------------------------------------------------- THE RADIUS LOCK
+   * Sharp edges are the single most-violated rule of this design system and a
+   * missed `rounded-lg` is invisible in a diff. This makes the rule structural.
+   * Do not remove it. Do not add an exception. SVG shapes are unaffected.
+   */
+  *,
+  *::before,
+  *::after {
+    border-radius: 0 !important;
   }
+
+  /* ----------------------------------------------------------- THE FOCUS LOCK
+   * Several components/ui primitives carry `outline-none` in their class
+   * strings; a utility layer beats a base layer on a specificity tie, so
+   * without !important they would win and the element would have no visible
+   * focus state. This guarantees every focusable element has one.
+   */
+  *:focus-visible {
+    outline: 2px solid var(--accent) !important;
+    outline-offset: 2px !important;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    font-family: var(--stack-sans);
+    -webkit-text-size-adjust: 100%;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    background: var(--background);
+    color: var(--foreground);
+    font-size: 1rem;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* Nothing may cause a horizontal scrollbar. Wide tables scroll inside
+       their own container; see DataTable. */
+    overflow-x: hidden;
   }
-  html {
-    @apply font-sans;
+
+  /* Headings carry no default size: every heading in this build states its own
+     responsive size, weight and tracking explicitly. This block only removes
+     the browser defaults so an unstyled heading is obviously wrong. */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--stack-sans);
+    font-weight: 600;
+    font-size: inherit;
+    line-height: 1.1;
   }
+
   ::selection {
-    background: color-mix(in oklch, var(--foreground) 14%, transparent);
+    background: var(--accent);
+    color: var(--accent-foreground);
   }
-  /* Tabular figures wherever numbers carry meaning. */
-  .nums {
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum";
-  }
-  /* Quiet, product-grade scrollbars on scroll containers. */
-  .app-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: color-mix(in oklch, var(--foreground) 18%, transparent) transparent;
-  }
-  .app-scroll::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-  .app-scroll::-webkit-scrollbar-thumb {
-    background: color-mix(in oklch, var(--foreground) 16%, transparent);
-    border: 3px solid transparent;
-    background-clip: content-box;
-    border-radius: 9999px;
-  }
-  .app-scroll::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in oklch, var(--foreground) 28%, transparent);
-    background-clip: content-box;
+
+  /* --------------------------------------------------------------- THE GRAIN
+   * Fractal noise at 1.5% over the whole viewport. pointer-events:none means it
+   * can never intercept a click, so the very high z-index is safe.
+   */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.015;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
   }
 }
 
-/* Route content enter — subtle, one-shot. */
+/* ==========================================================================
+   COMPONENT CLASSES
+   Five classes only. Everything else is Tailwind utilities at the call site.
+   ========================================================================== */
+
+/* The one micro-type class. Labels, never sentences. Replaces the old .eyebrow. */
+.label {
+  font-family: var(--stack-mono);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Tabular figures wherever a number carries meaning and columns must align. */
+.nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Editorial reading surface: study notes, parent summaries, learn concept notes.
+   The lede is the one place Playfair appears inside the product. */
+.prose-editorial {
+  max-width: 68ch;
+}
+.prose-editorial > p {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+.prose-editorial > p + p {
+  margin-top: 1.5rem;
+}
+.prose-editorial > p:first-of-type {
+  font-family: var(--stack-quote);
+  font-size: 1.5rem;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+.prose-editorial > h2 {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.6875rem;
+  font-family: var(--stack-mono);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.prose-editorial > h2 + p {
+  margin-top: 1.5rem;
+}
+
+/* Quiet scrollbars on any element that scrolls inside the page. */
+.app-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+.app-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.app-scroll::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+}
+
+/* The paper band. Re-points every token so children written against the dark
+   palette keep working, inverted, with no per-child overrides. */
+.paper-band {
+  background: var(--paper);
+  color: var(--paper-ink);
+  --background: var(--paper);
+  --foreground: var(--paper-ink);
+  --muted-foreground: var(--paper-muted);
+  --faint: #c8c8c8;
+  --accent: var(--paper-accent);
+  --accent-foreground: var(--paper);
+  --border: var(--paper-border);
+  --border-strong: #8f8f8f;
+  --border-hover: #a3a3a3;
+  --card: var(--paper);
+  --muted: #f0f0f0;
+}
+
+/* ==========================================================================
+   MOTION
+   ========================================================================== */
+
+/* Route enter. The entire product motion budget, alongside CSS hover states. */
 @keyframes page-enter {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
 }
 .page-enter {
-  animation: page-enter 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: page-enter 200ms var(--ease);
+}
+
+/* Scroll reveal, landing only. Exactly the design system's specification:
+   opacity 0 to 1, translateY 20px to 0, 500ms, 80ms stagger, 100ms lead-in.
+   Elements start hidden ONLY once JS marks the scope ready, so a no-JS render
+   shows every word and every crawler sees the copy. */
+[data-reveal-scope="ready"] [data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 500ms var(--ease),
+    transform 500ms var(--ease);
+  transition-delay: calc(100ms + var(--reveal-i, 0) * 80ms);
+}
+[data-reveal-scope="ready"] [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* Route view transitions. Chrome is frozen so only page content swaps. */
+::view-transition { pointer-events: none; }
+::view-transition-group(topbar),
+::view-transition-group(worknav) {
+  animation: none;
+}
+::view-transition-old(.page-swap) {
+  animation: 200ms var(--ease) both page-swap-out;
+}
+::view-transition-new(.page-swap) {
+  animation: 200ms var(--ease) both page-swap-in;
+}
+@keyframes page-swap-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: translateY(-6px); }
+}
+@keyframes page-swap-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -210,4 +406,70 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  [data-reveal-scope="ready"] [data-reveal],
+  [data-reveal-scope="ready"] [data-reveal].is-revealed {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ==========================================================================
+   FOCUS MODE
+   FocusFrame sets data-focus on <html>. Chrome is suppressed, not removed: the
+   wordmark stays, so there is always a way home that is not the back button.
+   ========================================================================== */
+
+html[data-focus="true"] .workspace-nav,
+html[data-focus="true"] .topbar-breadcrumb,
+html[data-focus="true"] .topbar-menu {
+  display: none;
+}
+
+/* Chrome is frozen across route transitions; only page content swaps. */
+.topbar { view-transition-name: topbar; }
+.workspace-nav { view-transition-name: worknav; }
+
+/* Off-screen until focused, then parked over the top bar. */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 60;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--accent);
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--stack-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 150ms var(--ease);
+}
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* The only loading indicator in the build. A hairline that draws itself,
+   left to right and back. Replaces every spinner. */
+@keyframes rule-sweep {
+  0%    { transform: scaleX(0); transform-origin: left center; }
+  50%   { transform: scaleX(1); transform-origin: left center; }
+  50.1% { transform: scaleX(1); transform-origin: right center; }
+  100%  { transform: scaleX(0); transform-origin: right center; }
+}
+.rule-sweep {
+  height: 2px;
+  background: var(--accent);
+  animation: rule-sweep 1.2s var(--ease) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rule-sweep { animation: none; transform: none; opacity: 0.5; }
 }
