@@ -1,33 +1,57 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter_Tight, JetBrains_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { AppShell } from "@/components/app/AppShell";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+/** Primary. Headlines and body both. Inter Tight ships tighter default sidebearings
+ *  than Inter, which is what lets display sizes sit at -0.06em without collapsing. */
+const interTight = Inter_Tight({
+  variable: "--font-inter-tight",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+/** Labels, stats, codes, dates. Never prose. */
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+});
+
+/** Pull quotes only. Four permitted call sites in the whole build. */
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Sonder — Proof of Concept",
+  title: {
+    default: "Sonder: Beyond Right or Wrong",
+    template: "%s · Sonder",
+  },
   description:
-    "Interactive high-fidelity prototype of the Sonder adaptive misconception-diagnosis system.",
+    "Sonder diagnoses the specific misconception behind a wrong answer, shows a teacher its evidence, and never reaches a student or parent unreviewed. Interactive proof of concept.",
+  openGraph: {
+    title: "Sonder: Beyond Right or Wrong",
+    description:
+      "Adaptive misconception diagnosis across Maths, Physics and Chemistry. Every result passes a teacher first.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`dark ${interTight.variable} ${jetbrainsMono.variable} ${playfair.variable}`}
     >
-      <body className="h-full bg-background text-foreground">
+      <body className="bg-background text-foreground antialiased">
         <Providers>
           <AppShell>{children}</AppShell>
         </Providers>
