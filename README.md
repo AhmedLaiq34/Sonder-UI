@@ -30,4 +30,12 @@ Next.js 16 App Router, React 19, Tailwind v4, shadcn/base-ui, three.js, GSAP + S
 
 ## Licensing
 
-The 3D viewer and `public/models/brain.glb` originate from an Anatomy Atelier extraction. The upstream anatomy repository ships without a LICENSE file, and the GLB material names suggest Tripo AI generation. Reuse terms must be confirmed with the source author before any public or commercial deployment. The landing footer discloses the Tripo provenance of the specimen model.
+Carried forward from the design source. Abbreviated disclosure also appears in the landing footer.
+
+- The upstream app the viewer was extracted from (`github.com/thebuggeddev/anatomy`) has **no LICENSE file and no `license` field**, which under default copyright means all rights reserved. The extraction was made for this final-year-project use. **Confirm reuse terms with the source author before any public or commercial deployment.**
+- `brain.glb`'s material is named `tripo_material_...`, meaning the mesh was generated with **Tripo AI**. Check Tripo's asset-licensing terms for the account that produced it.
+- `gsap` ships under GreenSock's standard no-charge licence, free for most uses. Read https://gsap.com/licensing/ if this ever becomes commercial. `three`, `react`, `next`, `lenis` and `lucide` are MIT.
+
+## Port notes
+
+Every intentional divergence from `brain-extract-anatomy` is listed in `docs/PORT-NOTES.md`.
