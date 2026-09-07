@@ -14,6 +14,7 @@ export default function StudentConsultant() {
         prompts: STUDENT_PROMPTS,
         fallback: STUDENT_FALLBACK,
       }}
+      label="Ask the consultant"
     />
   );
 }
