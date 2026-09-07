@@ -2,12 +2,13 @@
 
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Loader2, RotateCcw } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { Scenario } from "@/fixtures/scenarios/types";
 import { useScenarioPlayer } from "@/lib/useScenarioPlayer";
 import { OutcomeBanner } from "@/components/shared";
+import { FocusFrame } from "@/components/layout";
+import { Label, AccentBar } from "@/components/type";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
 const THINKING_MS = 950;
@@ -55,65 +56,81 @@ export function SessionClient({
     setPhase("intro");
   }
 
-  // ---- intro (S1) ---------------------------------------------------------
+  const progress =
+    phase === "intro"
+      ? { current: 0, total: scenario.questionBudget }
+      : phase === "done"
+        ? { current: scenario.questionBudget, total: scenario.questionBudget }
+        : {
+            current: Math.min(answeredSoFar + 1, scenario.questionBudget),
+            total: scenario.questionBudget,
+          };
+
   if (phase === "intro") {
     return (
-      <Centered>
-        <div className="w-full max-w-md rounded-2xl border border-border bg-card p-7 shadow-xs">
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-            {mode === "general" ? "Broad subject check" : "Topic diagnostic"}
-          </p>
-          <h1 className="mt-2 text-xl font-semibold tracking-tight">
-            {modeLabel}
-          </h1>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            You’ll get one question at a time, up to {scenario.questionBudget}.
-            Answer as best you can. There’s no time limit and no score at the end.
-          </p>
-          <Button className="mt-6 w-full" onClick={() => setPhase("question")}>
-            Begin
-            <ArrowRight className="size-4" />
-          </Button>
-        </div>
-      </Centered>
+      <FocusFrame
+        progress={progress}
+        exitHref="/student"
+        exitLabel="Leave this check"
+      >
+        <Label tone="accent">
+          {mode === "general" ? "Broad subject check" : "Topic diagnostic"}
+        </Label>
+        <h1 className="mt-8 text-4xl font-semibold tracking-tight sm:text-5xl">
+          {modeLabel}
+        </h1>
+        <AccentBar className="mt-8" />
+        <p className="mt-10 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+          You will get one question at a time, up to {scenario.questionBudget}.
+          Answer as best you can. There is no time limit and no score at the end.
+        </p>
+        <Button size="lg" className="mt-12 w-full" onClick={() => setPhase("question")}>
+          Begin
+          <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+        </Button>
+      </FocusFrame>
     );
   }
 
-  // ---- thinking (S3) ----------------------------------------------------
   if (phase === "thinking") {
     return (
-      <Centered>
-        <Loader2 className="size-6 animate-spin text-muted-foreground" />
-        <p className="mt-3 text-sm text-muted-foreground">
-          Working through your answer…
-        </p>
-      </Centered>
+      <FocusFrame
+        progress={progress}
+        exitHref="/student"
+        exitLabel="Leave this check"
+      >
+        <div role="status" className="py-16">
+          <div className="rule-sweep w-40" aria-hidden />
+          <p className="mt-6 text-base text-muted-foreground">
+            Working through your answer
+          </p>
+        </div>
+      </FocusFrame>
     );
   }
 
-  // ---- done (S4 / S5) --------------------------------------------------
   if (phase === "done") {
     const o = scenario.studentOutcome;
     return (
-      <div className="mx-auto w-full max-w-xl px-4 py-10 sm:px-6">
-        <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-          Session complete · {modeLabel}
-        </p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+      <FocusFrame
+        progress={progress}
+        exitHref="/student"
+        exitLabel="Leave this check"
+      >
+        <Label tone="muted">{`Session complete · ${modeLabel}`}</Label>
+        <h1 className="mt-8 text-4xl font-semibold tracking-tight sm:text-5xl">
           {o.headline}
         </h1>
-        <div className="mt-4">
-          <OutcomeBanner type={o.type} message={o.message} />
-        </div>
+        <OutcomeBanner type={o.type} message={o.message} className="mt-12" />
 
-        <div className="mt-6 flex flex-wrap gap-2">
+        <div className="mt-12 flex flex-wrap gap-8">
           {o.type === "diagnosed" ? (
             <Link
               href={`/student/remediation/${scenario.id}`}
               className={buttonVariants()}
             >
               See your study note
-              <ArrowRight className="size-4" />
+              <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
             </Link>
           ) : (
             <Link href="/student" className={buttonVariants()}>
@@ -121,93 +138,79 @@ export function SessionClient({
             </Link>
           )}
           <Button variant="ghost" onClick={restart}>
-            <RotateCcw className="size-4" />
             Run again
           </Button>
         </div>
 
         {o.type === "unsure" ? (
           <>
-            <p className="mt-4 text-sm">
-              <Link href="/student/learn" className="font-medium underline-offset-2 hover:underline">
+            <p className="mt-10 text-base">
+              <Link
+                href="/student/learn"
+                className="relative inline-block font-medium text-foreground after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-accent"
+              >
                 Learn about a related concept
-              </Link>{" "}
-              while this is with your teacher.
+              </Link>
             </p>
-            <p className="mt-2 text-xs text-muted-foreground">
+            <p className="mt-4 text-sm text-muted-foreground">
               Nothing is shared with your parent until a teacher has reviewed it.
             </p>
           </>
         ) : null}
-      </div>
+      </FocusFrame>
     );
   }
 
-  // ---- question (S2) -------------------------------------------------
   const step = player.current;
-  const qNumber = answeredSoFar + 1;
   return (
-    <div className="mx-auto w-full max-w-xl px-4 py-10 sm:px-6">
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span>{modeLabel}</span>
-        <span className="nums">
-          Question {qNumber} of up to {scenario.questionBudget}
-        </span>
-      </div>
-      <Progress
-        value={(qNumber / scenario.questionBudget) * 100}
-        className="mt-2 h-1.5"
-      />
-
-      <h1 className="mt-10 text-xl font-medium leading-snug tracking-tight">
+    <FocusFrame
+      progress={progress}
+      exitHref="/student"
+      exitLabel="Leave this check"
+    >
+      <Label tone="muted">{modeLabel}</Label>
+      <h1 className="mt-10 text-3xl font-semibold leading-snug tracking-tight sm:text-4xl">
         {step.questionText}
       </h1>
 
-      <div className="mt-6 grid gap-2.5">
-        {step.optionsShown?.map((opt, i) => (
-          <button
-            key={opt}
-            type="button"
-            onClick={() => answer(opt)}
-            className={cn(
-              "group flex items-center gap-3 rounded-xl border px-4 py-3.5 text-left text-sm transition-all",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              chosen === opt
-                ? "border-foreground bg-foreground text-background"
-                : "border-border bg-card shadow-xs hover:-translate-y-px hover:border-foreground/40 hover:shadow-sm",
-            )}
-          >
-            <span
+      <div className="mt-12 border-t border-border">
+        {step.optionsShown?.map((opt, i) => {
+          const selected = chosen === opt;
+          return (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => answer(opt)}
               className={cn(
-                "nums grid size-6 shrink-0 place-items-center rounded-md border text-xs font-medium",
-                chosen === opt
-                  ? "border-background/30 text-background"
-                  : "border-border text-muted-foreground group-hover:border-foreground/40",
+                "group relative flex min-h-16 w-full items-center gap-6 border-b border-border px-2 py-5 text-left text-lg transition-colors duration-150 ease-[var(--ease)]",
+                selected ? "bg-muted" : "hover:bg-muted",
               )}
             >
-              {String.fromCharCode(65 + i)}
-            </span>
-            {opt}
-          </button>
-        ))}
+              {selected ? (
+                <span aria-hidden className="absolute inset-y-0 left-0 w-0.5 bg-accent" />
+              ) : null}
+              <span
+                className={cn(
+                  "label nums w-6 shrink-0",
+                  selected ? "text-accent" : "text-faint",
+                )}
+              >
+                {String.fromCharCode(65 + i)}
+              </span>
+              {opt}
+            </button>
+          );
+        })}
       </div>
 
-      <p className="mt-8 text-xs text-muted-foreground">
-        Sonder picks each next question from your answers so far. You won’t see
-        the reasoning — your teacher does.
+      <p className="mt-12 text-sm text-muted-foreground">
+        Sonder picks each next question from your answers so far. You will not see
+        the reasoning. Your teacher does.
       </p>
-    </div>
+    </FocusFrame>
   );
 }
 
 function subjectName(s: Scenario) {
   return s.subject.charAt(0).toUpperCase() + s.subject.slice(1);
-}
-
-function Centered({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mx-auto flex min-h-[60vh] w-full max-w-xl flex-col items-center justify-center px-4 text-center">
-      {children}
-    </div>
-  );
 }
