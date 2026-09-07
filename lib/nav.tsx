@@ -17,7 +17,15 @@ import {
 } from "lucide-react";
 import type { Role } from "@/lib/session";
 
-export type NavItem = { label: string; href: string; icon: LucideIcon };
+export type NavItem = {
+  label: string;
+  /** Short caption for the student dock. Full `label` stays on aria-label. */
+  dockLabel?: string;
+  href: string;
+  icon: LucideIcon;
+  /** Extra path prefixes that also mark this item active. */
+  match?: string[];
+};
 export type NavGroup = { label?: string; items: NavItem[] };
 
 /**
@@ -29,17 +37,34 @@ export const NAV: Record<Role, NavGroup[]> = {
   student: [
     {
       items: [
-        { label: "Home", href: "/student", icon: Home },
-        { label: "New diagnostic", href: "/student/start", icon: Compass },
-        { label: "Learn", href: "/student/learn", icon: GraduationCap },
+        { label: "Home", dockLabel: "Home", href: "/student", icon: Home },
+        {
+          label: "New Diagnostic",
+          dockLabel: "New",
+          href: "/student/start",
+          icon: Compass,
+          match: ["/student/session", "/student/verify"],
+        },
+        {
+          label: "Learn",
+          dockLabel: "Learn",
+          href: "/student/learn",
+          icon: GraduationCap,
+        },
       ],
     },
     {
       label: "Progress",
       items: [
-        { label: "My insights", href: "/student/insights", icon: LineChart },
         {
-          label: "Ask the consultant",
+          label: "My Insights",
+          dockLabel: "Insights",
+          href: "/student/insights",
+          icon: LineChart,
+        },
+        {
+          label: "Ask consultant",
+          dockLabel: "Ask",
           href: "/student/consultant",
           icon: MessageCircleQuestion,
         },
@@ -99,6 +124,19 @@ export const NAV: Record<Role, NavGroup[]> = {
     },
   ],
 };
+
+/** A role home matches exactly; every other item owns its subtree, plus `match`. */
+export function isNavItemActive(
+  pathname: string,
+  item: NavItem,
+  home: string,
+): boolean {
+  if (item.href === home) return pathname === item.href;
+  if (pathname === item.href || pathname.startsWith(`${item.href}/`)) return true;
+  return (item.match ?? []).some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
 
 /** Human labels for path segments, for the top-bar breadcrumb. */
 export const SEGMENT_LABELS: Record<string, string> = {
