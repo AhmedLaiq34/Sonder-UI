@@ -1,26 +1,35 @@
-import type { LucideIcon } from "lucide-react";
+import { Label, Heading } from "@/components/type";
+import { cn } from "@/lib/utils";
 
+/**
+ * An empty state is a poster too. Left aligned, no icon, no illustration, no
+ * box: a label, a headline, one sentence, at most one action.
+ */
 export function EmptyState({
-  icon: Icon,
+  label = "Nothing here",
   title,
   body,
   action,
+  className,
 }: {
-  icon: LucideIcon;
+  label?: string;
   title: string;
   body?: string;
   action?: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="flex flex-col items-center rounded-xl border border-dashed border-border bg-muted/20 px-6 py-12 text-center">
-      <span className="grid size-10 place-items-center rounded-lg bg-muted text-muted-foreground">
-        <Icon className="size-5" />
-      </span>
-      <p className="mt-3 text-sm font-medium">{title}</p>
+    <div className={cn("border-t border-border py-20 md:py-28", className)}>
+      <Label tone="muted">{label}</Label>
+      <Heading scale="section" className="mt-6 max-w-2xl">
+        {title}
+      </Heading>
       {body ? (
-        <p className="mt-1 max-w-sm text-sm text-muted-foreground">{body}</p>
+        <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground">
+          {body}
+        </p>
       ) : null}
-      {action ? <div className="mt-4">{action}</div> : null}
+      {action ? <div className="mt-10">{action}</div> : null}
     </div>
   );
 }
