@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useSession, type Role } from "@/lib/session";
 
 /**
  * Wrap a role area's pages. Content always renders (so pages server-render
- * normally); this only runs two client-side corrections once the session is
- * known: bounce a signed-out visitor to the picker, and adopt the role of a
- * page that was deep-linked while signed in as someone else.
+ * normally); this only runs a client-side correction once the session is known:
+ * adopt the role of whatever area was deep-linked into. There is no real auth,
+ * so bouncing unsigned visitors to the landing would break footer deep links
+ * and shareable product URLs.
  */
 export function RoleGate({
   role,
@@ -18,13 +18,11 @@ export function RoleGate({
   children: React.ReactNode;
 }) {
   const { role: current, ready, signIn } = useSession();
-  const router = useRouter();
 
   useEffect(() => {
     if (!ready) return;
-    if (!current) router.replace("/");
-    else if (current !== role) signIn(role);
-  }, [ready, current, role, router, signIn]);
+    if (current !== role) signIn(role);
+  }, [ready, current, role, signIn]);
 
   return <>{children}</>;
 }

@@ -2,41 +2,49 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronRight } from "lucide-react";
 import { SEGMENT_LABELS } from "@/lib/nav";
 
 /**
- * Breadcrumb derived from the pathname. Every segment except the last is a link
- * to its own path; the last is the current page.
+ * Mono, uppercase, slash-separated. Every segment except the last links to its
+ * own path; the last is the current page and is not a link.
+ * Labels come from SEGMENT_LABELS where a mapping exists, else the raw segment
+ * is de-hyphenated and capitalised.
  */
 export function Breadcrumb() {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
   if (segments.length === 0) return null;
 
-  const crumbs = segments.map((seg, i) => {
-    const href = "/" + segments.slice(0, i + 1).join("/");
-    const label =
+  const crumbs = segments.map((seg, i) => ({
+    href: "/" + segments.slice(0, i + 1).join("/"),
+    label:
       SEGMENT_LABELS[seg] ??
-      seg.replace(/-/g, " ").replace(/^\w/, (c) => c.toUpperCase());
-    return { href, label, last: i === segments.length - 1 };
-  });
+      seg.replace(/-/g, " ").replace(/^\w/, (c) => c.toUpperCase()),
+    last: i === segments.length - 1,
+  }));
 
   return (
-    <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1 text-sm">
+    <nav
+      aria-label="Breadcrumb"
+      className="topbar-breadcrumb label hidden min-w-0 items-center gap-3 md:flex"
+    >
       {crumbs.map((c) => (
-        <span key={c.href} className="flex min-w-0 items-center gap-1">
+        <span key={c.href} className="flex min-w-0 items-center gap-3">
           {c.last ? (
-            <span className="truncate font-medium text-foreground">{c.label}</span>
+            <span className="truncate text-foreground" aria-current="page">
+              {c.label}
+            </span>
           ) : (
             <>
               <Link
                 href={c.href}
-                className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+                className="shrink-0 text-muted-foreground transition-colors duration-150 hover:text-foreground"
               >
                 {c.label}
               </Link>
-              <ChevronRight className="size-3.5 shrink-0 text-muted-foreground/50" />
+              <span aria-hidden className="shrink-0 text-faint">
+                /
+              </span>
             </>
           )}
         </span>
