@@ -1,111 +1,161 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { LifeBuoy, ChevronRight, Sparkles } from "lucide-react";
-import { PageShell } from "@/components/app/PageShell";
-import { Surface, SectionHeading } from "@/components/app/primitives";
-import { StatusBadge } from "@/components/shared";
+import { ArrowRight } from "lucide-react";
+import {
+  Container,
+  PageMasthead,
+  Split,
+  ListRow,
+  GroupHeading,
+} from "@/components/layout";
+import { EmptyState } from "@/components/app/EmptyState";
+import { Label } from "@/components/type";
+import { StatusMark, Mark } from "@/components/shared";
 import { buttonVariants } from "@/components/ui/button";
 import { ESCALATIONS } from "@/fixtures/escalations";
 import { getStudent } from "@/fixtures/students";
 
 export default function EscalationQueue() {
-  return (
-    <PageShell
-      title="Escalation queue"
-      description="Cases where the engine ran out of separating questions or budget. It never guesses — these wait for you."
-    >
-      <SectionHeading count={ESCALATIONS.length}>Open cases</SectionHeading>
-      <div className="mt-3 space-y-4">
-        {ESCALATIONS.map((esc) => {
-          const student = getStudent(esc.studentId);
-          return (
-            <Surface key={esc.studentId} className="p-5">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="text-sm font-semibold">{student?.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {student ? cap(student.subject) : ""} · {student?.topicName} ·
-                    escalated {esc.escalatedOn}
-                  </p>
-                </div>
-                <StatusBadge status="escalated" />
-              </div>
+  const [selectedId, setSelectedId] = useState(ESCALATIONS[0]?.studentId ?? "");
+  const selected = ESCALATIONS.find((e) => e.studentId === selectedId) ?? ESCALATIONS[0];
+  const selectedStudent = selected ? getStudent(selected.studentId) : undefined;
 
-              <p className="mt-3 text-sm">
-                <span className="font-medium">Why it escalated: </span>
-                {esc.reason}
+  if (!ESCALATIONS.length) {
+    return (
+      <Container>
+        <PageMasthead
+          label="Escalations"
+          title="Escalation queue"
+          lede="Cases where the engine ran out of separating questions or budget. It never guesses, so these wait for you."
+        />
+        <EmptyState title="The queue is empty." />
+      </Container>
+    );
+  }
+
+  return (
+    <Container width="wide">
+      <PageMasthead
+        label="Escalations"
+        title="Escalation queue"
+        lede="Cases where the engine ran out of separating questions or budget. It never guesses, so these wait for you."
+      />
+
+      <Split
+        ratio="8/4"
+        sticky
+        primary={
+          <div>
+            <GroupHeading count={ESCALATIONS.length}>Waiting</GroupHeading>
+            <div className="border-t border-border">
+              {ESCALATIONS.map((esc) => {
+                const student = getStudent(esc.studentId);
+                return (
+                  <ListRow
+                    key={esc.studentId}
+                    leading={<StatusMark status="escalated" />}
+                    title={student?.name ?? esc.studentId}
+                    meta={
+                      student
+                        ? `${cap(student.subject)} · ${student.topicName}`
+                        : undefined
+                    }
+                    trailing={`escalated ${esc.escalatedOn}`}
+                    selected={esc.studentId === selectedId}
+                    onSelect={() => setSelectedId(esc.studentId)}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        }
+        secondary={
+          selected ? (
+            <div>
+              <Label tone="attention">Escalated</Label>
+              <h2 className="mt-4 text-3xl font-semibold tracking-tight">
+                {selectedStudent?.name}
+              </h2>
+              <p className="mt-3 text-sm text-muted-foreground">
+                {selectedStudent ? cap(selectedStudent.subject) : ""} ·{" "}
+                {selectedStudent?.topicName} · escalated {selected.escalatedOn}
               </p>
-              {esc.tiedPair ? (
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Level: {esc.tiedPair[0]} vs {esc.tiedPair[1]}
+              <p className="mt-8 text-base leading-relaxed">
+                <span className="font-medium">Why it escalated. </span>
+                {selected.reason}
+              </p>
+              {selected.tiedPair ? (
+                <p className="mt-4 text-sm text-muted-foreground">
+                  Level: {selected.tiedPair[0]} vs {selected.tiedPair[1]}
                 </p>
               ) : null}
 
-              <div className="mt-3 rounded-lg bg-muted/40 p-3">
-                <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-ai">
-                  <LifeBuoy className="size-3.5" />
-                  AI Consultant suggestion — an idea to weigh, not a diagnosis
+              <div className="mt-10 border-t-2 border-t-accent pt-8">
+                <Label tone="accent">AI consultant suggestion</Label>
+                <p className="mt-4 text-sm text-muted-foreground">
+                  An idea to weigh, not a diagnosis.
                 </p>
-                <p className="mt-1.5 text-sm text-foreground/85">
-                  {esc.suggestion.text}
-                </p>
-                <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
-                  {esc.suggestion.evidence.map((e) => (
-                    <li key={e} className="flex gap-1.5">
-                      <span aria-hidden>·</span>
+                <p className="mt-4 text-base leading-relaxed">{selected.suggestion.text}</p>
+                <ul className="mt-6 border-t border-border">
+                  {selected.suggestion.evidence.map((e) => (
+                    <li key={e} className="border-b border-border py-3 text-sm text-muted-foreground">
                       {e}
                     </li>
                   ))}
                 </ul>
               </div>
 
-              {esc.generationRun ? (
-                <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-ai/25 bg-ai/5 p-3 text-sm">
-                  <Sparkles className="size-3.5 shrink-0 text-ai" aria-hidden />
-                  <span>
-                    Generation run auto-started —{" "}
-                    <span className="nums font-medium">{esc.generationRun.drafted}</span>{" "}
+              {selected.generationRun ? (
+                <div className="mt-10 border-t border-border pt-8">
+                  <Label tone="attention">Generation run auto-started</Label>
+                  <p className="mt-4 text-base leading-relaxed">
+                    <span className="nums font-medium">{selected.generationRun.drafted}</span>{" "}
                     new questions{" "}
-                    {esc.generationRun.status === "ready"
+                    {selected.generationRun.status === "ready"
                       ? "scored and ready for review."
                       : "being scored."}
-                  </span>
+                  </p>
                   <Link
-                    href={`/teacher/content-review/generation/${esc.generationRun.runId}`}
-                    className="ml-auto shrink-0 text-xs font-medium text-ai underline-offset-2 hover:underline"
+                    href={`/teacher/content-review/generation/${selected.generationRun.runId}`}
+                    className={buttonVariants({ variant: "ghost", className: "mt-6" })}
                   >
                     View run
                   </Link>
                 </div>
               ) : null}
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                {esc.scenarioId ? (
+              <div className="mt-12 flex flex-wrap gap-8">
+                {selected.scenarioId ? (
                   <>
                     <Link
-                      href={`/teacher/session/${esc.scenarioId}`}
-                      className={buttonVariants({ variant: "outline", size: "sm" })}
+                      href={`/teacher/session/${selected.scenarioId}`}
+                      className={buttonVariants({ variant: "outline" })}
                     >
                       Open evidence
                     </Link>
                     <Link
-                      href={`/teacher/session/${esc.scenarioId}/review`}
-                      className={buttonVariants({ size: "sm" })}
+                      href={`/teacher/session/${selected.scenarioId}/review`}
+                      className={buttonVariants()}
                     >
                       Resolve
-                      <ChevronRight className="size-3.5" />
+                      <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
                     </Link>
                   </>
                 ) : (
-                  <span className="text-xs text-muted-foreground">
-                    No session replay in this build — resolve from your own records.
+                  <span className="text-sm text-muted-foreground">
+                    No session replay in this build. Resolve from your own records.
                   </span>
                 )}
               </div>
-            </Surface>
-          );
-        })}
-      </div>
-    </PageShell>
+            </div>
+          ) : (
+            <Mark bucket="inert">Select a case</Mark>
+          )
+        }
+      />
+    </Container>
   );
 }
 
