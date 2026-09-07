@@ -1,9 +1,16 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BookOpen } from "lucide-react";
-import { PageShell } from "@/components/app/PageShell";
 import { LEARN_PAGES, getLearnPage } from "@/fixtures/learn/pages";
 import { ResourceFinder } from "@/components/learn/ResourceFinder";
 import { ConceptChat } from "@/components/learn/ConceptChat";
+import {
+  Container,
+  PageMasthead,
+  Section,
+  GroupHeading,
+  MetaList,
+} from "@/components/layout";
+import { buttonVariants } from "@/components/ui/button";
 
 export function generateStaticParams() {
   return LEARN_PAGES.map((p) => ({ subject: p.subject, code: p.code }));
@@ -19,47 +26,68 @@ export default async function LearnPageRoute({
   if (!page) notFound();
 
   return (
-    <PageShell
-      eyebrow={`Learn · ${page.subject}`}
-      title={page.title}
-      description="Not tied to a diagnosis — read this any time you want to understand the concept."
-      wide
-    >
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <div className="min-w-0 space-y-6">
-          <section id="notes" className="scroll-mt-6 rounded-xl border border-border bg-card p-5">
-            <div className="flex items-center gap-2 text-sm font-semibold">
-              <BookOpen className="size-4 text-muted-foreground" />
-              What this is
-            </div>
-            <p className="mt-2 text-sm leading-relaxed text-foreground/85">{page.whatItIs}</p>
+    <Container>
+      <PageMasthead
+        label="Concept"
+        title={page.title}
+        meta={
+          <div>
+            <MetaList
+              items={[
+                { label: "Subject", value: cap(page.subject) },
+                { label: "Code", value: page.code },
+              ]}
+            />
+            <Link
+              href="/student/start"
+              className={buttonVariants({ variant: "outline", className: "mt-8" })}
+            >
+              Start a diagnostic
+            </Link>
+          </div>
+        }
+      />
 
-            <div className="mt-4 border-t border-border pt-4 text-sm font-semibold">
-              How to think about it
-            </div>
-            <p className="mt-2 text-sm leading-relaxed text-foreground/85">{page.howToThink}</p>
-
-            <div className="mt-4 space-y-1.5 rounded-lg bg-muted/40 p-3 text-xs">
-              <p><span className="font-medium">Example: </span>{page.example.prompt}</p>
-              <p><span className="font-medium text-warn-foreground dark:text-warn">The slip: </span>{page.example.wrongMove}</p>
-              <p><span className="font-medium text-ok">The fix: </span>{page.example.rightMove}</p>
-              <p><span className="font-medium">Answer: </span>{page.example.answer}</p>
-            </div>
-          </section>
-
-          <section id="resources" className="scroll-mt-6">
-            <h2 className="text-sm font-semibold">Recommended resources</h2>
-            <div className="mt-2">
-              <ResourceFinder query={page.searchQuery} resources={page.resources} />
-            </div>
-          </section>
+      <Section id="notes" size="default" bordered>
+        <div className="prose-editorial">
+          <h2>What this is</h2>
+          <p>{page.whatItIs}</p>
+          <h2>How to think about it</h2>
+          <p>{page.howToThink}</p>
         </div>
+        <MetaList
+          className="mt-12"
+          items={[
+            { label: "Prompt", value: page.example.prompt },
+            { label: "The usual slip", value: page.example.wrongMove },
+            { label: "The fix", value: page.example.rightMove },
+            {
+              label: "Answer",
+              value: (
+                <span className="font-mono text-accent">{page.example.answer}</span>
+              ),
+            },
+          ]}
+        />
+      </Section>
 
-        <div className="lg:sticky lg:top-6 lg:self-start">
-          <h2 className="mb-2 text-sm font-semibold">Ask about this concept</h2>
+      <Section id="resources" size="default" bordered>
+        <GroupHeading>Recommended resources</GroupHeading>
+        <div className="mt-8">
+          <ResourceFinder query={page.searchQuery} resources={page.resources} />
+        </div>
+      </Section>
+
+      <Section size="default" bordered>
+        <GroupHeading>Ask about this concept</GroupHeading>
+        <div className="mt-8">
           <ConceptChat chat={page.chat} />
         </div>
-      </div>
-    </PageShell>
+      </Section>
+    </Container>
   );
+}
+
+function cap(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
