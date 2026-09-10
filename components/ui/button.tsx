@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 const buttonVariants = cva(
   [
     "group relative inline-flex shrink-0 items-center justify-center",
-    "whitespace-nowrap font-semibold uppercase tracking-wider",
+    "whitespace-nowrap font-semibold uppercase",
     "transition-all duration-150 ease-[var(--ease)]",
     "active:translate-y-px",
     "disabled:pointer-events-none disabled:opacity-50",
@@ -25,9 +25,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        /* Primary: accent text over a 2px accent rule that widens on hover. */
+        /* Primary: accent text over a 2px accent rule that widens on hover.
+           Tracking is narrower than .label's 0.2em: a primary action must
+           out-rank the captions around it, not match them. */
         primary: [
-          "px-0 text-accent",
+          "px-0 tracking-wide text-accent",
           "after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0",
           "after:h-0.5 after:bg-accent after:origin-center after:scale-x-100",
           "after:transition-transform after:duration-150 after:ease-[var(--ease)]",
@@ -36,13 +38,13 @@ const buttonVariants = cva(
 
         /* Secondary: 1px outline that fully inverts on hover. */
         outline: [
-          "border border-foreground px-6 text-foreground",
+          "border border-foreground px-6 tracking-wider text-foreground",
           "hover:bg-foreground hover:text-background",
         ].join(" "),
 
         /* Ghost: muted text, hairline underline drawn in from the left on hover. */
         ghost: [
-          "px-4 text-muted-foreground hover:text-foreground",
+          "px-4 tracking-wider text-muted-foreground hover:text-foreground",
           "after:pointer-events-none after:absolute after:inset-x-4 after:bottom-0",
           "after:h-px after:bg-current after:origin-left after:scale-x-0",
           "after:transition-transform after:duration-150 after:ease-[var(--ease)]",
@@ -57,6 +59,12 @@ const buttonVariants = cva(
         icon: "size-11 gap-0 px-0 after:hidden",
       },
     },
+    compoundVariants: [
+      /* Primary out-ranks the .label captions around it: one step up from the
+         shared size scale. Outline and ghost are unchanged. */
+      { variant: "primary", size: "default", class: "text-base" },
+      { variant: "primary", size: "lg", class: "text-lg" },
+    ],
     defaultVariants: { variant: "primary", size: "default" },
   },
 );

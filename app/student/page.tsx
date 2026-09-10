@@ -11,19 +11,19 @@ export default function StudentHome() {
   return (
     <Container>
       <PageMasthead
-        scale="hero"
+        scale="page"
         label="Student"
         title={`Welcome back, ${first}`}
         lede="Start a diagnostic when a topic feels shaky. Your teacher reviews everything before it goes anywhere."
         actions={
-          <Link href="/student/start" className={buttonVariants()}>
+          <Link href="/student/start" className={buttonVariants({ size: "lg" })}>
             Start a diagnostic
             <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
           </Link>
         }
       />
 
-      <Section size="default">
+      <Section size="tight">
         <Callout
           tone="attention"
           kicker="Due now"
@@ -38,7 +38,7 @@ export default function StudentHome() {
         />
       </Section>
 
-      <Section size="tight" bordered>
+      <Section size="compact" bordered>
         <GroupHeading>Last session</GroupHeading>
         <Link href="/student/remediation/B" className="block">
           <ListRow
@@ -49,7 +49,7 @@ export default function StudentHome() {
         </Link>
       </Section>
 
-      <Section size="tight" bordered>
+      <Section size="compact" bordered>
         <GroupHeading>Where to go next</GroupHeading>
         <LinkRow
           href="/student/start"
