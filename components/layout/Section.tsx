@@ -12,7 +12,7 @@ export function Section({
   className,
   ...rest
 }: {
-  size?: "tight" | "default" | "hero";
+  size?: "compact" | "tight" | "default" | "hero";
   bordered?: boolean;
   muted?: boolean;
   children: React.ReactNode;
@@ -21,6 +21,7 @@ export function Section({
   return (
     <section
       className={cn(
+        size === "compact" && "py-10 md:py-12",
         size === "tight" && "py-16 md:py-20",
         size === "default" && "py-20 md:py-28",
         size === "hero" && "py-28 md:py-40",

@@ -93,7 +93,7 @@ export default function ContentReviewQueue() {
       />
 
       {tab === "separator" ? (
-        <Section size="default">
+        <Section size="tight">
           {!separatorRejected ? (
             <div className="max-w-3xl">
               <MetaList
@@ -163,7 +163,7 @@ export default function ContentReviewQueue() {
           )}
         </Section>
       ) : (
-        <Section size="default">
+        <Section size="tight">
           <Split
             ratio="8/4"
             sticky

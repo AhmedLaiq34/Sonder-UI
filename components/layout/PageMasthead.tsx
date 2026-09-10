@@ -81,7 +81,7 @@ export function PageMasthead({
         <div className="mt-10 flex flex-wrap items-center gap-8">{actions}</div>
       ) : null}
 
-      <div className="mt-16 md:mt-20">
+      <div className="mt-10 md:mt-12">
         <SectionRule />
       </div>
 

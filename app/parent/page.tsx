@@ -29,7 +29,7 @@ export default function ParentHome() {
   return (
     <Container>
       <PageMasthead
-        scale="hero"
+        scale="page"
         label="Parent"
         title={`${first}'s progress`}
         lede="Plain-language summaries, and only after a teacher has approved them. No scores, no raw results."
@@ -43,7 +43,7 @@ export default function ParentHome() {
         }
       />
 
-      <Section size="default">
+      <Section size="tight">
         <GroupHeading>Summaries</GroupHeading>
         <div className="border-t border-border">
           {PARENT_SUMMARIES.map((s) => {

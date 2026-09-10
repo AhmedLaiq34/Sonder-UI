@@ -43,13 +43,13 @@ export default function TeacherDashboard() {
   return (
     <Container width="wide">
       <PageMasthead
-        scale="hero"
+        scale="page"
         label="Teacher"
         title="Class dashboard"
         lede="Every diagnosis reaches you with its evidence before a student or parent sees it."
       />
 
-      <Section size="tight">
+      <Section size="compact">
         <StatRow
           items={[
             { label: "Awaiting review", value: awaiting, tone: awaiting ? "attention" : "muted" },
@@ -60,7 +60,7 @@ export default function TeacherDashboard() {
       </Section>
 
       {lead ? (
-        <Section size="tight" bordered>
+        <Section size="compact" bordered>
           <Callout
             tone={lead.status === "escalated" ? "attention" : "accent"}
             kicker="Needs your attention"
@@ -92,7 +92,7 @@ export default function TeacherDashboard() {
         </Section>
       ) : null}
 
-      <Section size="default" bordered>
+      <Section size="tight" bordered>
         <DataTable
           caption="Classes 9-B and 9-A"
           getRowKey={(r) => r.student.id}
@@ -143,7 +143,7 @@ export default function TeacherDashboard() {
         />
       </Section>
 
-      <Section size="tight" bordered>
+      <Section size="compact" bordered>
         <GroupHeading>Where to go</GroupHeading>
         <LinkRow
           href="/teacher/escalations"

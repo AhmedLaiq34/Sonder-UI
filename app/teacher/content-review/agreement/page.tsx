@@ -64,7 +64,7 @@ function AgreementContent() {
         title="Two-reviewer agreement"
         lede="A generated item enters the bank only after two reviewers have seen it. Where they differ, you adjudicate."
       />
-      <Section size="default">
+      <Section size="tight">
         <Split
           ratio="8/4"
           sticky
@@ -154,7 +154,7 @@ function BatchAgreement({ run }: { run: GenerationRun }) {
         title="Two-reviewer agreement"
         lede={`Batch ${run.id} · ${run.finalBatch.length} items · second reviewer`}
       />
-      <Section size="default">
+      <Section size="tight">
         <Split
           ratio="8/4"
           sticky

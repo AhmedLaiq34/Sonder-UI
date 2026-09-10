@@ -29,7 +29,7 @@ export function SummaryView({ summary: s }: { summary: ParentSummary }) {
           title={`${s.subject} · ${s.topicName}`}
           lede={s.date}
         />
-        <Section size="default">
+        <Section size="tight">
           <Mark bucket="pending">Not approved yet</Mark>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground">
             Zara&apos;s teacher hasn&apos;t finished reviewing this. Parents only see a
@@ -53,7 +53,7 @@ export function SummaryView({ summary: s }: { summary: ParentSummary }) {
         title={`${s.subject} · ${s.topicName}`}
         lede={s.date}
       />
-      <Section size="default">
+      <Section size="tight">
         <Split
           ratio="8/4"
           sticky

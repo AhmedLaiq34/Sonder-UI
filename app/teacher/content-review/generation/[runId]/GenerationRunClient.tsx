@@ -70,7 +70,7 @@ export function GenerationRunClient({ run }: { run: GenerationRun }) {
         stepNoun="Round"
       />
 
-      <Section size="default">
+      <Section size="tight">
         <Split
           ratio="8/4"
           sticky

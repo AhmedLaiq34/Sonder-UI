@@ -12,7 +12,6 @@ import { DataTable } from "@/components/app/DataTable";
 import { FilterStrip } from "@/components/app/FilterStrip";
 import { Mark } from "@/components/shared";
 import { Label } from "@/components/type";
-import { AdminTabs } from "../Tabs";
 import { PROVENANCE_LOG, type ProvenanceEntry } from "@/fixtures/provenance";
 
 const KIND_LABEL: Record<ProvenanceEntry["kind"], string> = {
@@ -72,7 +71,6 @@ export default function ProvenanceLog() {
         label="Provenance"
         title="Generation provenance log"
         lede="Every AI-generated question or suggestion, with when it was created, what generated it, and who validated it."
-        tabs={<AdminTabs />}
       />
 
       <div className="sticky top-[var(--topbar-h)] z-20 border-b border-border bg-background">
@@ -90,7 +88,7 @@ export default function ProvenanceLog() {
         />
       </div>
 
-      <Section size="default">
+      <Section size="tight">
         <Split
           ratio="8/4"
           sticky

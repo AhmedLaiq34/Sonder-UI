@@ -14,7 +14,6 @@ import { FilterStrip } from "@/components/app/FilterStrip";
 import { Mark } from "@/components/shared";
 import { Label } from "@/components/type";
 import { buttonVariants } from "@/components/ui/button";
-import { AdminTabs } from "../Tabs";
 import { COVERAGE_GAPS, type CoverageGap } from "@/fixtures/coverage";
 
 const STATUS_LABEL: Record<CoverageGap["status"], string> = {
@@ -94,7 +93,6 @@ export default function CoverageReport() {
         label="Coverage"
         title="Coverage report"
         lede={`${open} gap${open === 1 ? "" : "s"} currently need attention. ${COVERAGE_GAPS.length - open} closed.`}
-        tabs={<AdminTabs />}
       />
 
       <div className="sticky top-[var(--topbar-h)] z-20 border-b border-border bg-background">
@@ -112,7 +110,7 @@ export default function CoverageReport() {
         />
       </div>
 
-      <Section size="default">
+      <Section size="tight">
         <Split
           ratio="8/4"
           sticky

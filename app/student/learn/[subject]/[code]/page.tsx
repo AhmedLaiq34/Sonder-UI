@@ -48,7 +48,7 @@ export default async function LearnPageRoute({
         }
       />
 
-      <Section id="notes" size="default" bordered>
+      <Section id="notes" size="tight" bordered>
         <div className="prose-editorial">
           <h2>What this is</h2>
           <p>{page.whatItIs}</p>
@@ -71,14 +71,14 @@ export default async function LearnPageRoute({
         />
       </Section>
 
-      <Section id="resources" size="default" bordered>
+      <Section id="resources" size="tight" bordered>
         <GroupHeading>Recommended resources</GroupHeading>
         <div className="mt-8">
           <ResourceFinder query={page.searchQuery} resources={page.resources} />
         </div>
       </Section>
 
-      <Section size="default" bordered>
+      <Section size="tight" bordered>
         <GroupHeading>Ask about this concept</GroupHeading>
         <div className="mt-8">
           <ConceptChat chat={page.chat} />

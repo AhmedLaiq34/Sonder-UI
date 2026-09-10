@@ -23,7 +23,7 @@ describe("PageMasthead", () => {
     expect(container.querySelector("[data-slot=section-rule]")).toBeTruthy();
     expect(
       container.querySelector("[data-slot=section-rule]")?.parentElement?.className,
-    ).toContain("mt-16");
+    ).toContain("mt-10");
     expect(container.querySelector("hr")).toBeNull();
   });
 

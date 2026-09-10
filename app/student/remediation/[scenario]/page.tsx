@@ -30,7 +30,7 @@ export default async function RemediationPage({
         lede={`For ${scenario.topicName}. Read this in your own time. It is yours to come back to.`}
       />
 
-      <Section size="default">
+      <Section size="tight">
         <Split
           ratio="8/4"
           sticky

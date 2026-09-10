@@ -46,7 +46,7 @@ export default async function StudentInsights({
         }
       />
 
-      <Section size="default">
+      <Section size="tight">
         <Split
           ratio="8/4"
           sticky

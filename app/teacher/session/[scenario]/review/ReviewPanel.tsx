@@ -111,7 +111,7 @@ export function ReviewPanel({ scenario }: { scenario: Scenario }) {
     return (
       <Container>
         {masthead}
-        <Section size="default">
+        <Section size="tight">
           <Split
             ratio="8/4"
             sticky
@@ -149,7 +149,7 @@ export function ReviewPanel({ scenario }: { scenario: Scenario }) {
   return (
     <Container>
       {masthead}
-      <Section size="default">
+      <Section size="tight">
         <Split
           ratio="8/4"
           sticky

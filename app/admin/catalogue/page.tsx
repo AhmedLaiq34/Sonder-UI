@@ -11,7 +11,6 @@ import { FilterStrip } from "@/components/app/FilterStrip";
 import { MisconceptionCard } from "@/components/shared";
 import { EmptyState } from "@/components/app/EmptyState";
 import { Input } from "@/components/ui/input";
-import { AdminTabs } from "../Tabs";
 import { CATALOGUE } from "@/fixtures/catalogue";
 
 type SubjectFilter = "all" | "mathematics" | "physics" | "chemistry";
@@ -50,7 +49,6 @@ export default function CatalogueBrowser() {
         label="Catalogue"
         title="Misconception catalogue"
         lede="The validated set of misconceptions the engine can diagnose, per subject."
-        tabs={<AdminTabs />}
       />
 
       <div className="sticky top-[var(--topbar-h)] z-20 space-y-4 border-b border-border bg-background py-4">
@@ -89,7 +87,7 @@ export default function CatalogueBrowser() {
         </div>
       </div>
 
-      <Section size="tight">
+      <Section size="compact">
         <p className="mb-8 text-sm text-muted-foreground">
           {results.length} {results.length === 1 ? "entry" : "entries"}
         </p>
