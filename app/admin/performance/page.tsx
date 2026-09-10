@@ -6,33 +6,24 @@ import {
 } from "@/components/layout";
 import { MetricCard } from "@/components/shared";
 import { Label } from "@/components/type";
-import { AdminTabs } from "../Tabs";
-import {
-  PERF_METRICS,
-  ACCURACY_BY_METHOD,
-  PERF_NOTES,
-} from "@/fixtures/performance";
-import { cn } from "@/lib/utils";
+import { PERF_METRICS, PERF_NOTES } from "@/fixtures/performance";
 
 export default function PerformanceReport() {
-  const max = Math.max(...ACCURACY_BY_METHOD.map((b) => b.value));
-
   return (
     <Container>
       <PageMasthead
         label="Performance"
         title="Performance reporting"
         lede="Accuracy, question efficiency and error rate: each measured against a simpler method, not reported on its own."
-        tabs={<AdminTabs />}
       />
 
-      <Section size="default">
+      <Section size="tight">
         <Split
           ratio="8/4"
           sticky
           primary={
             <div>
-              <div className="grid gap-8 sm:grid-cols-3">
+              <div className="grid gap-8 sm:grid-cols-2">
                 {PERF_METRICS.map((m) => (
                   <MetricCard
                     key={m.label}
@@ -43,37 +34,6 @@ export default function PerformanceReport() {
                     direction={m.direction}
                     goodWhen={m.goodWhen}
                   />
-                ))}
-              </div>
-
-              <h2 className="mt-20 text-2xl font-semibold tracking-tight">
-                Diagnostic accuracy by method
-              </h2>
-              <div className="mt-8 border-t border-border">
-                {ACCURACY_BY_METHOD.map((b) => (
-                  <div key={b.method} className="border-b border-border py-6">
-                    <div className="flex justify-between text-sm">
-                      <span
-                        className={cn(
-                          b.isSonder
-                            ? "font-semibold text-foreground"
-                            : "text-muted-foreground",
-                        )}
-                      >
-                        {b.method}
-                      </span>
-                      <span className="nums font-medium">{b.value.toFixed(1)}%</span>
-                    </div>
-                    <div className="mt-4 h-0.5 w-full bg-border">
-                      <div
-                        className={cn(
-                          "h-full transition-[width] duration-700 ease-[var(--ease)]",
-                          b.isSonder ? "bg-accent" : "bg-muted-foreground",
-                        )}
-                        style={{ width: `${(b.value / max) * 100}%` }}
-                      />
-                    </div>
-                  </div>
                 ))}
               </div>
             </div>

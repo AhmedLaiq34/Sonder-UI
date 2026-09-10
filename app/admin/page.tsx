@@ -9,7 +9,6 @@ import {
   GroupHeading,
 } from "@/components/layout";
 import { StatRow } from "@/components/type";
-import { AdminTabs } from "./Tabs";
 import { buttonVariants } from "@/components/ui/button";
 import { CATALOGUE } from "@/fixtures/catalogue";
 import { COVERAGE_GAPS } from "@/fixtures/coverage";
@@ -23,14 +22,13 @@ export default function AdminHome() {
   return (
     <Container>
       <PageMasthead
-        scale="hero"
+        scale="page"
         label="Admin"
         title="Content and curriculum"
         lede="The catalogue of known misconceptions, the gaps between them, and how the engine performs against simpler methods."
-        tabs={<AdminTabs />}
       />
 
-      <Section size="tight">
+      <Section size="compact">
         <StatRow
           items={[
             {
@@ -47,9 +45,9 @@ export default function AdminHome() {
               tone: openGaps ? "attention" : "accent",
             },
             {
-              label: "Accuracy",
+              label: PERF_METRICS[0].label,
               value: PERF_METRICS[0].value,
-              hint: "vs 68.3% baseline",
+              hint: `vs ${PERF_METRICS[0].baselineValue} baseline`,
               href: "/admin/performance",
               tone: "accent",
             },
@@ -64,7 +62,7 @@ export default function AdminHome() {
       </Section>
 
       {openGaps > 0 ? (
-        <Section size="tight" bordered>
+        <Section size="compact" bordered>
           <Callout
             tone="attention"
             kicker="Coverage"
@@ -80,7 +78,7 @@ export default function AdminHome() {
         </Section>
       ) : null}
 
-      <Section size="tight" bordered>
+      <Section size="compact" bordered>
         <GroupHeading>Areas</GroupHeading>
         <LinkRow
           href="/admin/catalogue"
