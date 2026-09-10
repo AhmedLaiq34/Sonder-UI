@@ -29,6 +29,7 @@ describe("AppShell persistent chrome", () => {
     cleanup();
     pathname = "/";
     localStorage.clear();
+    document.documentElement.removeAttribute("data-theme");
   });
 
   it("shows landing slots on /", () => {
@@ -53,6 +54,9 @@ describe("AppShell persistent chrome", () => {
     expect(screen.getByText("Skip to how it works")).toBeTruthy();
     expect(screen.queryByRole("navigation", { name: "Breadcrumb" })).toBeNull();
     expect(screen.getByRole("button", { name: "Play background music" })).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: /Switch to (light|dark) theme/ }),
+    ).toBeTruthy();
     expect(document.querySelector("header.topbar")?.className).not.toContain("border-accent");
   });
 
@@ -77,6 +81,9 @@ describe("AppShell persistent chrome", () => {
     expect(screen.getByText("Skip to content")).toBeTruthy();
     expect(screen.queryByRole("navigation", { name: "Landing" })).toBeNull();
     expect(screen.getByRole("button", { name: "Play background music" })).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: /Switch to (light|dark) theme/ }),
+    ).toBeTruthy();
     expect(document.querySelector("header.topbar")?.className).toContain("border-border");
     expect(document.querySelector("header.topbar")?.className).not.toContain("border-accent");
   });

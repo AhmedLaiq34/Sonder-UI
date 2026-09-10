@@ -7,7 +7,7 @@
   position: relative;
   min-height: 100dvh;
   color: var(--foreground);
-  color-scheme: dark;
+  /* color-scheme is inherited from :root. The hero pins its own via .ink-stage. */
 }
 
 .sonder-landing [id] {

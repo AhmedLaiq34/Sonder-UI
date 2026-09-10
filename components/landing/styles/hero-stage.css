@@ -13,6 +13,30 @@
   --hs-rim: #39ff14;
   --hs-hot: #c8ffb0;
   --hs-guide: rgba(57, 255, 20, 0.22);
+
+  /* Transparent so the page-wide wallpaper shows through behind the wordmark.
+     Type colour still comes from the tokens below; do not paint a fill here. */
+  background: transparent;
+}
+
+/* Light mode: the landing title sits on paper, so the ink-stage charcoal
+   remap would leave SONDER as white on white. Follow the page palette here. */
+:root[data-theme="light"] .hero-stage {
+  color-scheme: light;
+  color: #1a1a1a;
+  --background: #fafafa;
+  --foreground: #1a1a1a;
+  --muted: #f0f0f0;
+  --muted-foreground: #1a1a1a;
+  --faint: #1a1a1a;
+  --accent: #1b7a00;
+  --accent-foreground: #fafafa;
+  --attention: #9a5a00;
+  --attention-foreground: #fafafa;
+  --border: #e6e6e6;
+  --border-strong: #8f8f8f;
+  --border-hover: #a3a3a3;
+  --card: #ffffff;
 }
 
 /* ------------------------------------------------------------------- veil */
@@ -50,8 +74,8 @@
   stroke-linejoin: round;
 }
 
-/* The letterforms: warm white hairline. The neon is spent on the construction
-   geometry and on the specimen, not on the word. */
+/* The letterforms: hairline in --foreground. Dark: warm white on charcoal.
+   Light: charcoal on paper (see the light .hero-stage remap above). */
 .hero-stage .wm-core {
   stroke: var(--foreground);
   stroke-width: 1.5;

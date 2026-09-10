@@ -125,9 +125,19 @@ export default function HeroStage() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="hero-stage relative h-[100dvh] min-h-[100dvh] w-full">
+    <section
+      ref={sectionRef}
+      className="hero-stage ink-stage relative h-[100dvh] min-h-[100dvh] w-full"
+    >
+      {/* Short fade under the headline only. Kept below the brain and well
+          below the SONDER wordmark so the wallpaper stays visible behind the title. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[4] h-[32vh] bg-gradient-to-t from-background via-background/70 to-transparent"
+      />
+
       <BrainViewer
-        className="h-full w-full"
+        className="relative z-[6] h-full w-full"
         entryAnimation
         autoRotate={false}
         showLoader={false}
@@ -145,7 +155,7 @@ export default function HeroStage() {
       <div
         ref={veilRef}
         aria-hidden="true"
-        className="hero-veil pointer-events-none absolute inset-0 z-[6]"
+        className="hero-veil pointer-events-none absolute inset-0 z-[5]"
       />
 
       <div ref={wordmarkRef} className="hero-wordmark pointer-events-none absolute inset-0 z-[7]">
@@ -156,14 +166,6 @@ export default function HeroStage() {
         ref={leadRef}
         className="hero-lead pointer-events-none absolute inset-x-0 bottom-0 z-[8]"
       >
-        {/* Legibility scrim. The brain sits behind the type, so the bottom of
-            the frame is darkened before any text is drawn over it. This is not
-            decoration; it is what keeps the statement above 4.5:1. */}
-        <div
-          aria-hidden
-          className="absolute inset-x-0 bottom-0 h-[60vh] bg-gradient-to-t from-background via-background/85 to-transparent"
-        />
-
         <div className="relative mx-auto flex max-w-[1440px] flex-col gap-8 px-6 pb-[8vh] pt-6 md:px-12 lg:flex-row lg:items-end lg:justify-between lg:px-16">
           <div className="min-w-0 max-w-[min(100%,28rem)]">
             <p className="label text-accent">{HERO_KICKER}</p>

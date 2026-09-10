@@ -13,6 +13,7 @@ import { Breadcrumb } from "./Breadcrumb";
 import { RoleMenu } from "./RoleMenu";
 import { MobileNav } from "./MobileNav";
 import { MusicToggle } from "./MusicToggle";
+import { ThemeToggle } from "./ThemeToggle";
 
 /**
  * One persistent header. Inner slots swap with the route; the <header className="topbar">
@@ -135,6 +136,7 @@ function LandingSlots() {
           );
         })}
       </div>
+      <ThemeToggle />
       <MusicToggle />
     </nav>
   );
@@ -172,6 +174,7 @@ function ProductSlots({
       <Breadcrumb />
 
       <div className="ml-auto flex shrink-0 items-center gap-2">
+        <ThemeToggle />
         <MusicToggle />
         <RoleMenu />
       </div>

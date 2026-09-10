@@ -90,8 +90,10 @@ function prefersReducedMotion() {
  * Faint neon wireframe field. Colour is the product accent. No copy, no mouse
  * chase, no scroll coupling. The parent supplies size and opacity.
  */
-export function GenerativeArtScene() {
+export function GenerativeArtScene({ color = NEON }: { color?: string }) {
   const mountRef = useRef<HTMLDivElement>(null);
+  const materialRef = useRef<THREE.ShaderMaterial | null>(null);
+  const redrawRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -125,6 +127,8 @@ export function GenerativeArtScene() {
     });
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
+    materialRef.current = material;
+    redrawRef.current = () => renderer.render(scene, camera);
 
     const pointLight = new THREE.PointLight(0xffffff, 1, 100);
     pointLight.position.copy(lightPos);
@@ -181,6 +185,8 @@ export function GenerativeArtScene() {
       cancelAnimationFrame(frameId);
       window.removeEventListener("resize", handleResize);
       document.removeEventListener("visibilitychange", handleVisibility);
+      materialRef.current = null;
+      redrawRef.current = null;
       geometry.dispose();
       material.dispose();
       renderer.dispose();
@@ -189,6 +195,16 @@ export function GenerativeArtScene() {
       }
     };
   }, []);
+
+  // The colour is a uniform, so it changes without recompiling the shader or
+  // re-creating the scene. Under reduced motion there is no rAF loop, so the
+  // canvas must be told to repaint once.
+  useEffect(() => {
+    const material = materialRef.current;
+    if (!material) return;
+    material.uniforms.color.value.set(color);
+    redrawRef.current?.();
+  }, [color]);
 
   return <div ref={mountRef} className="absolute inset-0 h-full w-full" />;
 }

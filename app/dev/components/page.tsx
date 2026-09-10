@@ -5,6 +5,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { BrandMark } from "@/components/app/BrandMark";
+import { ThemeToggle } from "@/components/app/ThemeToggle";
 import { FilterStrip } from "@/components/app/FilterStrip";
 import { DataTable, type Column } from "@/components/app/DataTable";
 import { StepTimeline } from "@/components/app/StepTimeline";
@@ -110,6 +111,10 @@ export default function ComponentGallery() {
   const state = POSTERIOR_STATES[stateIdx];
 
   return (
+    <>
+      <div className="fixed right-4 top-4 z-50 border border-border-strong bg-background">
+        <ThemeToggle />
+      </div>
     <Container>
       <PageMasthead
         scale="hero"
@@ -353,5 +358,6 @@ export default function ComponentGallery() {
         <p className="text-sm text-muted-foreground">End of gallery.</p>
       </LayoutSection>
     </Container>
+    </>
   );
 }

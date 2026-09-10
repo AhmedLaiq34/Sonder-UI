@@ -112,7 +112,7 @@ export function PosteriorBarSet({
                     className="absolute inset-0"
                     style={{
                       backgroundImage:
-                        "repeating-linear-gradient(45deg, transparent 0 3px, rgba(26,26,26,0.55) 3px 6px)",
+                        "repeating-linear-gradient(45deg, transparent 0 3px, var(--hatch) 3px 6px)",
                     }}
                   />
                 ) : null}
