@@ -53,8 +53,17 @@ export function RoleMenu() {
         aria-expanded={open}
         className="label flex min-h-11 items-center gap-3 px-2 text-muted-foreground transition-colors duration-150 hover:text-foreground"
       >
-        <span className="max-w-[14ch] truncate">
-          {current ? current.person : "Choose a workspace"}
+        <span className="flex min-w-0 items-baseline gap-2">
+          {current ? (
+            <>
+              <span className="shrink-0 text-foreground">{current.label}</span>
+              <span className="hidden max-w-[14ch] truncate text-faint md:inline">
+                {current.person}
+              </span>
+            </>
+          ) : (
+            "Choose a workspace"
+          )}
         </span>
         <ChevronDown
           className={cn(
@@ -98,17 +107,18 @@ export function RoleMenu() {
                 role="menuitem"
                 onClick={() => enter(r)}
                 className={cn(
-                  "relative flex min-h-14 w-full items-center justify-between gap-4 px-6 text-left",
+                  "group relative flex min-h-14 w-full items-center justify-between gap-4 px-6 text-left",
                   "transition-colors duration-150 hover:bg-muted",
                   active && "bg-muted",
                 )}
               >
-                {active ? (
-                  <span
-                    aria-hidden
-                    className="absolute inset-y-2 left-0 w-0.5 bg-accent"
-                  />
-                ) : null}
+                <span
+                  aria-hidden
+                  className={cn(
+                    "absolute inset-y-2 left-0 w-0.5 transition-colors duration-150 ease-[var(--ease)]",
+                    active ? "bg-accent" : "bg-transparent group-hover:bg-border-strong",
+                  )}
+                />
                 <span className="min-w-0">
                   <span className="block text-base font-medium">{meta.label}</span>
                   <span className="block truncate text-sm text-muted-foreground">

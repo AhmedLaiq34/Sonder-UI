@@ -40,7 +40,17 @@ export function WorkspaceNav() {
           {meta.label} workspace
         </p>
       ) : (
-        <div className="h-8 shrink-0" aria-hidden />
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <div className="flex h-8 shrink-0 items-center justify-center pt-8 text-muted-foreground">
+                <meta.icon className="size-[18px]" strokeWidth={1.5} aria-hidden />
+                <span className="sr-only">{meta.label} workspace</span>
+              </div>
+            }
+          />
+          <TooltipContent side="right">{meta.label} workspace</TooltipContent>
+        </Tooltip>
       )}
 
       <nav
