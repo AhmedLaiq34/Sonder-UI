@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { LANDING_CHROME_SENTINEL_ID } from "@/lib/chrome";
 import { Thesis } from "./sections/Thesis";
-import { Numbers } from "./sections/Numbers";
 import { Workspaces } from "./sections/Workspaces";
 import { LandingFooter } from "./sections/LandingFooter";
 import VineScroller from "./VineScroller";
@@ -21,7 +20,9 @@ const HeroStage = dynamic(() => import("./HeroStage"), {
   ssr: false,
   // Exactly one dynamic viewport tall, on the page ground, so nothing shifts
   // when the real hero swaps in. This is the CLS defence.
-  loading: () => <div className="h-[100dvh] w-full" aria-hidden />,
+  loading: () => (
+    <div className="hero-stage ink-stage h-[100dvh] w-full" aria-hidden />
+  ),
 });
 
 export function Landing() {
@@ -64,7 +65,6 @@ export function Landing() {
           <VineScroller />
         </section>
 
-        <Numbers />
         <Workspaces />
       </main>
 

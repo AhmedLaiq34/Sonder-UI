@@ -32,14 +32,6 @@ export function Workspaces() {
         >
           Four workspaces. One engine.
         </h2>
-        <p
-          data-reveal
-          className="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground"
-        >
-          This build runs entirely on scripted fixture data. There is no backend,
-          no authentication and no live model. Pick a workspace and walk the flow
-          end to end.
-        </p>
 
         <div className="mt-20 border-t border-border">
           {ROLE_ORDER.map((role, i) => {
