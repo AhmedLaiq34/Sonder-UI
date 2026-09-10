@@ -32,7 +32,7 @@ export function BrandMark({
         className="shrink-0"
       />
       {withWordmark ? (
-        <span className="font-mono text-[0.6875rem] font-medium uppercase leading-none tracking-[0.34em]">
+        <span className="font-mono text-[1.125rem] font-medium uppercase leading-none tracking-[0.34em]">
           Sonder
         </span>
       ) : null}

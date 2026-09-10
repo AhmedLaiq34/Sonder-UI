@@ -17,7 +17,7 @@ export function LayeredNumber({
       aria-hidden
       className={cn(
         "pointer-events-none absolute -z-10 hidden select-none",
-        "font-mono text-8xl leading-none tracking-tighter text-faint md:block lg:text-9xl",
+        "font-mono text-8xl leading-none tracking-tighter text-decorative md:block lg:text-9xl",
         className,
       )}
     >

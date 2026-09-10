@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 /**
- * The micro-type signature: mono, uppercase, 0.2em tracking, 11px.
+ * The micro-type signature: mono, uppercase, 0.2em tracking, 15px.
  * Used wherever a label is not a sentence. Never for prose.
  *
  * `tone` maps to the four status buckets in the plan, part 2.3.

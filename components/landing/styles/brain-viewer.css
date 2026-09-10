@@ -29,7 +29,7 @@
   overflow: hidden;
   color: var(--bv-ink);
   font-family: var(--bv-font-sans);
-  font-size: 14px;
+  font-size: 15px;
   /* Transparent so the Aether particle canvas shows through behind the brain. */
   background: transparent;
 }
@@ -97,7 +97,7 @@
   justify-content: center;
   gap: 5px;
   cursor: pointer;
-  font: 500 9px/1 var(--bv-font-serif);
+  font: 500 15px/1 var(--bv-font-serif);
 }
 .brain-viewer .tool-button.active { color: var(--bv-coral); background: rgba(57, 255, 20, 0.12); }
 .brain-viewer .tool-button:last-child { border-top: 1px solid var(--bv-line); border-radius: 0 0 12px 12px; }
@@ -122,9 +122,9 @@
   align-items: center;
   gap: 4px;
   color: var(--bv-lavender);
-  font: italic 12px "Comic Sans MS", "Bradley Hand", cursive;
+  font: italic 15px "Comic Sans MS", "Bradley Hand", cursive;
 }
-.brain-viewer .tip-note p { margin: 8px 0 0; font: 500 14px/1.55 var(--bv-font-serif); }
+.brain-viewer .tip-note p { margin: 8px 0 0; font: 500 15px/1.55 var(--bv-font-serif); }
 
 /* ---------------------------------------------------------- hotspot callout */
 
@@ -166,7 +166,7 @@
 }
 .brain-viewer .hotspot-callout[data-side="right"] .callout-body::before { right: 100%; }
 .brain-viewer .hotspot-callout[data-side="left"] .callout-body::before { left: 100%; }
-.brain-viewer .callout-body b { display: block; padding-inline-start: 13px; font: 500 13px var(--bv-font-serif); }
+.brain-viewer .callout-body b { display: block; padding-inline-start: 13px; font: 500 15px var(--bv-font-serif); }
 .brain-viewer .callout-body b::before {
   content: "";
   position: absolute;
@@ -182,7 +182,7 @@
   margin-top: 3px;
   padding-inline-start: 13px;
   color: var(--bv-muted);
-  font-size: 10px;
+  font-size: 15px;
   line-height: 1.35;
 }
 .brain-viewer .callout-close {
@@ -230,7 +230,7 @@
   background: var(--bv-glass);
   box-shadow: 0 5px 14px rgba(0, 0, 0, 0.4);
   cursor: pointer;
-  font: 500 10px var(--bv-font-serif);
+  font: 500 15px var(--bv-font-serif);
 }
 .brain-viewer .switch { width: 29px; height: 17px; padding: 2px; border-radius: 99px; background: #274852; }
 .brain-viewer .switch i { display: block; width: 13px; height: 13px; border-radius: 50%; background: #d8f7f5; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.17); }
@@ -247,13 +247,13 @@
   flex-direction: column;
   gap: 2px;
   color: var(--bv-muted);
-  font-size: 9px;
+  font-size: 15px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 .brain-viewer .view-caption strong {
   color: var(--bv-ink);
-  font: 500 13px var(--bv-font-serif);
+  font: 500 16px var(--bv-font-serif);
   text-transform: none;
   letter-spacing: 0;
 }
@@ -272,7 +272,7 @@
   backdrop-filter: blur(4px);
 }
 .brain-viewer .model-loader strong { font: 500 18px var(--bv-font-serif); }
-.brain-viewer .model-loader span { color: var(--bv-muted); font-size: 10px; }
+.brain-viewer .model-loader span { color: var(--bv-muted); font-size: 15px; }
 .brain-viewer .loader-orbit {
   width: 48px;
   height: 48px;
@@ -307,7 +307,7 @@
   .brain-viewer .auto-rotate { bottom: 82px; right: 10px; }
   .brain-viewer .view-caption { left: 12px; bottom: 84px; }
   .brain-viewer .tip-note { width: 130px; min-height: 113px; padding: 11px; }
-  .brain-viewer .tip-note p { font-size: 12px; }
+  .brain-viewer .tip-note p { font-size: 15px; }
   .brain-viewer .callout-body { width: 148px; top: -26px; }
 }
 

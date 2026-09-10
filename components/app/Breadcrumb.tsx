@@ -42,7 +42,7 @@ export function Breadcrumb() {
               >
                 {c.label}
               </Link>
-              <span aria-hidden className="shrink-0 text-faint">
+              <span aria-hidden className="shrink-0 text-decorative">
                 /
               </span>
             </>
