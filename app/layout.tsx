@@ -3,6 +3,8 @@ import { Inter_Tight, JetBrains_Mono, Playfair_Display } from "next/font/google"
 import "./globals.css";
 import { Providers } from "./providers";
 import { AppShell } from "@/components/app/AppShell";
+import { InlineScript } from "@/components/app/InlineScript";
+import { THEME_ATTRIBUTE, THEME_STORAGE_KEY } from "@/lib/theme";
 
 /** Primary. Headlines and body both. Inter Tight ships tighter default sidebearings
  *  than Inter, which is what lets display sizes sit at -0.06em without collapsing. */
@@ -49,8 +51,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`dark ${interTight.variable} ${jetbrainsMono.variable} ${playfair.variable}`}
+      data-theme="dark"
+      suppressHydrationWarning
+      className={`${interTight.variable} ${jetbrainsMono.variable} ${playfair.variable}`}
     >
+      <head>
+        <InlineScript
+          html={`(function(){try{var t=localStorage.getItem(${JSON.stringify(
+            THEME_STORAGE_KEY,
+          )});if(t==="light"||t==="dark")document.documentElement.setAttribute(${JSON.stringify(
+            THEME_ATTRIBUTE,
+          )},t)}catch(e){}})()`}
+        />
+      </head>
       <body className="bg-background text-foreground antialiased">
         <Providers>
           <AppShell>{children}</AppShell>

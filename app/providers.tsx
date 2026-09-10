@@ -7,8 +7,9 @@ import { MusicProvider } from "@/lib/music";
 import { BackgroundMatter } from "@/components/app/BackgroundMatter";
 
 /**
- * There is no theme provider. This build is dark only: `globals.css` defines one
- * palette on :root and `app/layout.tsx` hardcodes class="dark" on <html>.
+ * Theme lives in lib/theme.tsx — a module-level store, not a provider — so
+ * nothing needs to be added here. globals.css holds both palettes and
+ * app/layout.tsx applies the stored one before first paint.
  */
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
