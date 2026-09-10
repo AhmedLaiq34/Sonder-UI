@@ -186,9 +186,13 @@ export function SessionClient({
                 selected ? "bg-muted" : "hover:bg-muted",
               )}
             >
-              {selected ? (
-                <span aria-hidden className="absolute inset-y-0 left-0 w-0.5 bg-accent" />
-              ) : null}
+              <span
+                aria-hidden
+                className={cn(
+                  "absolute inset-y-0 left-0 w-0.5 transition-colors duration-150 ease-[var(--ease)]",
+                  selected ? "bg-accent" : "bg-transparent group-hover:bg-border-strong",
+                )}
+              />
               <span
                 className={cn(
                   "label nums w-6 shrink-0",

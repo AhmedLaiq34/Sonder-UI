@@ -4,7 +4,9 @@ import { cn } from "@/lib/utils";
 
 /**
  * A dense selectable row. Selection is a 2px accent rule on the left edge plus
- * a muted ground, never a colour wash alone.
+ * a muted ground, never a colour wash alone. Hover gets its own rule, in
+ * `--border-strong`, so a hoverable row is distinguishable from a resting one
+ * before it is committed to — never a fill alone.
  */
 export function ListRow({
   leading,
@@ -27,9 +29,13 @@ export function ListRow({
 }) {
   const inner = (
     <>
-      {selected ? (
-        <span aria-hidden className="absolute inset-y-0 left-0 w-0.5 bg-accent" />
-      ) : null}
+      <span
+        aria-hidden
+        className={cn(
+          "absolute inset-y-0 left-0 w-0.5 transition-colors duration-150 ease-[var(--ease)]",
+          selected ? "bg-accent" : "bg-transparent group-hover:bg-border-strong",
+        )}
+      />
       <span className="flex min-w-0 flex-1 items-start gap-4">
         {leading ? <span className="mt-0.5 shrink-0">{leading}</span> : null}
         <span className="min-w-0 flex-1">
@@ -46,7 +52,7 @@ export function ListRow({
   );
 
   const shape = cn(
-    "relative flex w-full min-h-16 items-start justify-between gap-6",
+    "group relative flex w-full min-h-16 items-start justify-between gap-6",
     "border-b border-border py-5 pl-5 pr-2 text-left",
     "transition-colors duration-150 ease-[var(--ease)]",
     selected ? "bg-muted" : "hover:bg-muted",

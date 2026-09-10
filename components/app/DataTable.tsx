@@ -17,7 +17,9 @@ export type Column<T> = {
  * wide table scrolls inside itself at 390px and the page never does.
  *
  * Selection matches ListRow: a 2px accent rule on the left edge plus a muted
- * ground, never a colour wash alone.
+ * ground, never a colour wash alone. A clickable row also gets a
+ * `--border-strong` rule on hover, so it reads as interactive before it is
+ * selected; a non-clickable row gets neither cue.
  */
 export function DataTable<T>({
   columns,
@@ -87,7 +89,7 @@ export function DataTable<T>({
                 aria-current={selected ? "true" : undefined}
                 className={cn(
                   "border-b border-border transition-colors duration-150",
-                  onRowClick && "cursor-pointer hover:bg-muted",
+                  onRowClick && "group cursor-pointer hover:bg-muted",
                   selected && "bg-muted",
                 )}
               >
@@ -101,6 +103,13 @@ export function DataTable<T>({
                       col.className,
                     )}
                   >
+                    {colIndex === 0 && onRowClick && !selected ? (
+                      <span
+                        aria-hidden
+                        data-slot="row-hover"
+                        className="absolute inset-y-0 left-0 w-0.5 bg-transparent transition-colors duration-150 ease-[var(--ease)] group-hover:bg-border-strong"
+                      />
+                    ) : null}
                     {colIndex === 0 && selected ? (
                       <span
                         aria-hidden
