@@ -8,17 +8,7 @@ import { StatusMark, type SessionStatus } from "@/components/shared";
 import { StatRow } from "@/components/type";
 import { buttonVariants } from "@/components/ui/button";
 import { STUDENTS, type Student } from "@/fixtures/students";
-import { useTeacherReviews } from "@/lib/teacher-review";
-
-function effectiveStatus(
-  student: Student,
-  decisions: Record<string, string>,
-): SessionStatus {
-  const d = student.scenarioId ? decisions[student.scenarioId] : undefined;
-  if (d === "approved" || d === "corrected" || d === "resolved") return "diagnosed";
-  if (d === "rejected") return "awaiting-review";
-  return student.status;
-}
+import { useTeacherReviews, effectiveStatus } from "@/lib/teacher-review";
 
 type Row = { student: Student; status: SessionStatus; needsYou: boolean };
 
@@ -93,8 +83,18 @@ export default function TeacherDashboard() {
       ) : null}
 
       <Section size="tight" bordered>
+        <div className="flex items-baseline justify-between gap-6 pb-6">
+          <h2 className="text-2xl font-semibold tracking-tight">All students</h2>
+          <Link
+            href="/teacher/classes"
+            className="label inline-flex min-h-11 items-center gap-2 text-muted-foreground transition-colors duration-150 hover:text-foreground"
+          >
+            View classes
+            <ArrowRight className="size-3.5" strokeWidth={1.5} aria-hidden />
+          </Link>
+        </div>
         <DataTable
-          caption="Classes 9-B and 9-A"
+          caption="All students"
           getRowKey={(r) => r.student.id}
           rows={rows}
           columns={[

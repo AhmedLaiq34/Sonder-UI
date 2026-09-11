@@ -7,6 +7,8 @@
  */
 
 import { useCallback, useSyncExternalStore } from "react";
+import type { SessionStatus } from "@/components/shared";
+import type { Student } from "@/fixtures/students";
 
 export type ReviewDecision =
   | "approved"
@@ -76,3 +78,18 @@ export const DECISION_LABEL: Record<ReviewDecision, string> = {
   rejected: "Rejected",
   resolved: "Resolved manually",
 };
+
+/**
+ * The student's status once any recorded teacher decision is applied. Shared
+ * so the dashboard, the class list, and the class detail views can never
+ * silently drift apart on what a decision means.
+ */
+export function effectiveStatus(
+  student: Student,
+  decisions: Record<string, ReviewDecision>,
+): SessionStatus {
+  const d = student.scenarioId ? decisions[student.scenarioId] : undefined;
+  if (d === "approved" || d === "corrected" || d === "resolved") return "diagnosed";
+  if (d === "rejected") return "awaiting-review";
+  return student.status;
+}

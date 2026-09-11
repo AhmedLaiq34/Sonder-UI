@@ -12,16 +12,19 @@ import { WorkspaceNav } from "./WorkspaceNav";
  * so the page itself does not scroll.
  *
  * The header is always mounted on landing and product so crossing `/` and a
- * role home only swaps slots. The component gallery stays chrome-free.
+ * role home only swaps slots.
  */
+/** Any route whose whole page is a ChatFrame: it owns its own inner scroller. */
+function isChatSurface(pathname: string): boolean {
+  if (pathname.endsWith("/consultant")) return true;
+  if (pathname === "/student/messages" || pathname === "/parent/messages") return true;
+  return /^\/teacher\/messages\/[^/]+$/.test(pathname);
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const mode = chromeMode(pathname);
-  const consultant = pathname.endsWith("/consultant");
-
-  if (mode === "gallery") {
-    return <div className="relative z-[1]">{children}</div>;
-  }
+  const consultant = isChatSurface(pathname);
 
   return (
     <div className="relative z-[1] min-h-dvh bg-transparent">

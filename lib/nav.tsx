@@ -13,6 +13,8 @@ import {
   Gauge,
   ScrollText,
   GraduationCap,
+  School,
+  MessagesSquare,
   type LucideIcon,
 } from "lucide-react";
 import type { Role } from "@/lib/session";
@@ -54,6 +56,13 @@ export const NAV: Record<Role, NavGroup[]> = {
       ],
     },
     {
+      label: "Class",
+      items: [
+        { label: "My classes", href: "/student/classes", icon: School },
+        { label: "Message teacher", href: "/student/messages", icon: MessagesSquare },
+      ],
+    },
+    {
       label: "Progress",
       items: [
         {
@@ -78,6 +87,13 @@ export const NAV: Record<Role, NavGroup[]> = {
       ],
     },
     {
+      label: "Class",
+      items: [
+        { label: "Classes", href: "/teacher/classes", icon: School },
+        { label: "Messages", href: "/teacher/messages", icon: MessagesSquare },
+      ],
+    },
+    {
       label: "Queues",
       items: [
         {
@@ -99,7 +115,10 @@ export const NAV: Record<Role, NavGroup[]> = {
   ],
   parent: [
     {
-      items: [{ label: "Summaries", href: "/parent", icon: FileText }],
+      items: [
+        { label: "Summaries", href: "/parent", icon: FileText },
+        { label: "Message teacher", href: "/parent/messages", icon: MessagesSquare },
+      ],
     },
   ],
   admin: [
@@ -161,6 +180,8 @@ export const SEGMENT_LABELS: Record<string, string> = {
   coverage: "Coverage",
   performance: "Performance",
   provenance: "Provenance",
+  classes: "Classes",
+  messages: "Messages",
   A: "Scenario A",
   B: "Scenario B",
   C: "Scenario C",
